@@ -38,7 +38,7 @@ const Fade = styled.span`
 	top: 10px;
 	width: 30px;
 	height: 30px;
-	background: linear-gradient(90deg, hsla(0, 0%, 0%, 0) 0%, hsla(0, 0%, 5%, 1) 100%);
+	background: linear-gradient(90deg, hsla(0, 0%, 5%, 0) 0%, hsla(0, 0%, 5%, 1) 100%);
 `
 
 const RightItems = styled.span`

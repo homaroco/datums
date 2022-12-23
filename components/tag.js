@@ -8,7 +8,6 @@ const Container = styled.span`
 	overflow: hidden;
 	cursor: pointer;
 	white-space: nowrap;
-	font-family: Nunito, Helvetica, sans-serif;
 	height: 30px;
 	user-select: none;
 	flex: 0 0 auto;

@@ -6,6 +6,7 @@ const nunito = Nunito({
 	weight: ['400', '700'],
 	subsets: ['latin'],
 	display: 'swap',
+	fallback: ['Helvetica', 'sans-serif'],
 })
 
 export default function App({ Component, pageProps }) {
