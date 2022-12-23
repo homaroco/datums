@@ -22,4 +22,9 @@ ul {
 button {
   border: none;
   cursor: pointer;
+  color: grey;
+}
+
+button:hover {
+  color: white;
 }

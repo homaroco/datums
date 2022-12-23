@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/react'
 import { Nunito } from '@next/font/google'
 
 import '../styles/globals.css'
@@ -18,6 +19,7 @@ export default function App({ Component, pageProps }) {
 				}
 			`}</style>
 			<Component {...pageProps} />
+			<Analytics />
 		</>
 	)
 }
