@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { getContrastColor } from '../color'
+import { getContrastColor } from '../utils/color.js'
 
 const Container = styled.span`
 	display: inline-flex;
@@ -42,13 +42,13 @@ const Value = styled.span`
 	padding: 0 6px;
 `
 
-export default function Tag({ name, value, color, onClick }) {
-	const contrastColor = 'white'
-	const props = { color, contrastColor }
+export default function Tag({ name, value, color }) {
+	const contrastColor = getContrastColor(color)
+	const colors = { color, contrastColor }
 	return (
-		<Container onClick={onClick}>
-			<Name {...props}>{name}</Name>
-			{value && <Value {...props}>{value}</Value>}
+		<Container>
+			<Name {...colors}>{name}</Name>
+			{value && <Value {...colors}>{value}</Value>}
 		</Container>
 	)
 }

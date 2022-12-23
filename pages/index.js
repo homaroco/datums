@@ -1,33 +1,43 @@
 import { useState, useEffect } from 'react'
+import styled from 'styled-components'
 import Head from 'next/head'
+import { v4 as uuid } from 'uuid'
 
 import Layout from '../components/layout.js'
 import Header from '../components/header.js'
-import Tag from '../components/tag.js'
-import { convertHslValuesToHexString, getRandomHslValues } from '../color.js'
+import Datum from '../components/datum.js'
+import DatumBar from '../components/datum-bar.js'
 
-export default function Home() {
-  const [tag, setTag] = useState({
-    name: 'test name',
-    value: 'some value',
-    color: '#000000',
-    onClick: changeToRandomColor
-  })
+import { getRandomTag } from '../utils/random.js'
 
-  useEffect(() => {
-    setTag({
-      ...tag,
-      color: convertHslValuesToHexString(getRandomHslValues())
+const DATUMS = 10
+const MAX_TAGS = 5
+
+const DatumList = styled.ul``
+
+export async function getStaticProps() {
+  let datums = []
+  for (let i = 0; i < DATUMS; i++) {
+    let tags = []
+    const tagCount = Math.ceil(Math.random() * MAX_TAGS)
+    for (let j = 0; j < tagCount; j++) {
+      tags.push(getRandomTag())
+    }
+    datums.push({
+      id: uuid(),
+      time: Date.now(),
+      tags,
     })
-  }, [])
+  }  
 
-  function changeToRandomColor() {
-    setTag({
-      ...tag,
-      color: convertHslValuesToHexString(getRandomHslValues())
-    })
+  return {
+    props: {
+      datums,
+    },
   }
+}
 
+export default function ListView({ datums }) {
   return (
     <Layout>
       <Head>
@@ -35,7 +45,10 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      <Tag {...tag} />
+      <DatumList>
+        {datums.map(d => <Datum key={d.id} {...d} />)}
+      </DatumList>
+      <DatumBar />
     </Layout>
   )
 }

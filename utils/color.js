@@ -1,12 +1,12 @@
 export function getRandomHslValues() {
-	let h = Math.round(Math.random() * 360)
+	let h = Math.ceil(Math.random() * 360)
 	let s
 	do {
-		s = Math.round(Math.random() * 100)
-	} while (s < 20 || s > 80)
+		s = Math.ceil(Math.random() * 100)
+	} while (s < 33)
 	let l
 	do {
-		l = Math.round(Math.random() * 100)
+		l = Math.ceil(Math.random() * 100)
 	} while (l < 20 || l > 80)
 	return { h, s, l }
 }
