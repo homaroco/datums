@@ -42,7 +42,10 @@ export default function ListView({ datums }) {
     <Layout>
       <Head>
         <title>Datums - Private Personal Information</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="icons/datums.ico" />
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+        <meta name="theme-color" content="#0d0d0d" />
+        <link rel="manifest" href="/manifest.json" />
       </Head>
       <Header />
       <DatumList>
