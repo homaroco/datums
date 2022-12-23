@@ -13,7 +13,11 @@ import { getRandomTag } from '../utils/random.js'
 const DATUMS = 100
 const MAX_TAGS = 6
 
-const DatumList = styled.ul``
+const DatumList = styled.ul`
+&:last-child {
+  border-bottom: none;
+}
+`
 
 export async function getStaticProps() {
   let datums = []
