@@ -6,20 +6,9 @@
   background-color: #0d0d0d;
 }
 
-/* html,
-body {
-  padding: 0;
-  margin: 0;
-  font-family: Nunito, Helvetica, sans-serif;
-} */
-
 /* a {
   color: inherit;
   text-decoration: none;
-} */
-
-/* * {
-  box-sizing: border-box;
 } */
 
 img {
@@ -27,15 +16,7 @@ img {
   height: auto;
 }
 
-/* h1,
-h2,
-p,
 ul {
-  margin: 0;
-} */
-
-ul {
-  /* padding: 0; */
   list-style: none;
 }
 

@@ -10,8 +10,8 @@ import DatumBar from '../components/datum-bar.js'
 
 import { getRandomTag } from '../utils/random.js'
 
-const DATUMS = 10
-const MAX_TAGS = 5
+const DATUMS = 100
+const MAX_TAGS = 6
 
 const DatumList = styled.ul``
 

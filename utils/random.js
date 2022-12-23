@@ -39,9 +39,9 @@ function getRandomTagValue() {
 }
 
 export function getRandomTag() {
-	return {
-		name: getRandomTagName(),
-		value: getRandomTagValue(),
-		color: convertHslValuesToHexString(getRandomHslValues())
-	}
+  const name = getRandomTagName()
+  const value = getRandomTagValue()
+  const color = convertHslValuesToHexString(getRandomHslValues())
+  const id = `${name}: ${value}, color: ${color}`
+	return { id, name, value, color }
 }

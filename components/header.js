@@ -7,7 +7,8 @@ import { HiMenu } from 'react-icons/hi'
 
 const Header = styled.div`
 	display: flex;
-	position: relative;
+	position: sticky;
+	top: 0;
 	align-items: center;
 	justify-content: space-between;
 	height: 50px;
@@ -37,6 +38,10 @@ const Button = styled.button`
 	width: 32px;
 	aspect-ratio: 1 / 1;
 	margin: 0 5px;
+	color: grey;
+	& :hover {
+		color: white;
+	}
 `
 
 const SettingsMenuButton = styled(Button)`

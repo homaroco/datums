@@ -11,6 +11,7 @@ const Container = styled.span`
 	font-family: Nunito, Helvetica, sans-serif;
 	height: 30px;
 	user-select: none;
+	flex: 0 0 auto;
 `
 
 const Name = styled.span`
