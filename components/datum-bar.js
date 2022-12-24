@@ -32,10 +32,11 @@ const TagInputButton = styled.button`
 	color: grey;
 	font-family: Nunito;
 	font-weight: 700;
-	font-size: 14px;
+	font-size: 16px;
 	padding-right: 10px;
 	padding-left: 5px;
 	white-space: nowrap;
+	width: 100px;
 	&:hover {
 		border-color: white;
 		color: white;
@@ -52,18 +53,19 @@ const TagInputButtonIcon = styled(FaPlus)`
 `
 
 const TagInput = styled.input`
-	border: 1px solid grey;
+	border: 2px solid grey;
 	height: 30px;
 	border-radius: 5px;
-	margin-left: 10px;
 	color: white;
 	font-family: Nunito;
 	font-weight: 700;
 	font-size: 16px;
+	width: 100px;
+	padding: 0 10px;
 	&:hover {
 		border-color: white;
 	}
-	&:active {
+	&:focus {
 		border-color: white;
 	}
 `
@@ -79,31 +81,46 @@ const AddDatumButton = styled.button`
 
 const initTags = []
 for (let i = 0; i < 3; i++) {
-	initTags.push(getRandomTag({values: false}))
+	initTags.push(getRandomTag({ values: true }))
 }
 
 export default function DatumBar() {
 	const [state, setState] = useState({
 		tags: initTags,
 		input: '',
-		activeTag: null,
+		newTagInputMode: false,
 	})
 
 	function convertButtonToInput() {
 		setState({
 			...state,
-			activeTag: null
+			newTagInputMode: true
 		})
 	}
+
+	function convertInputToButton() {
+		setState({
+			...state,
+			newTagInputMode: false,
+		})
+	}
+
+	const NewTagButton = () => (
+		<TagInputButton onClick={convertButtonToInput}>
+			<TagInputButtonIcon />
+			New tag
+		</TagInputButton>
+	)
+
+	const NewTagInput = () => (
+		<TagInput autoFocus onBlur={convertInputToButton} />
+	)
 
 	return (
 		<InputBar>
 			<TagsContainer>
 				{state.tags.map(t => <Tag key={t.id} {...t} />)}
-				<TagInputButton onClick={convertButtonToInput}>
-					<TagInputButtonIcon />
-					New tag
-				</TagInputButton>
+				{state.newTagInputMode ? <NewTagInput /> : <NewTagButton />}
 			</TagsContainer>
 			<AddDatumButton>
 				<AddDatumButtonIcon />

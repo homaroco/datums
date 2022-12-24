@@ -14,8 +14,10 @@ const DATUMS = 100
 const MAX_TAGS = 6
 
 const DatumList = styled.ul`
-&:last-child {
-  border-bottom: none;
+ > * {
+   &:last-child {
+     border-bottom: none;
+    }
 }
 `
 
