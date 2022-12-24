@@ -34,7 +34,7 @@ export async function getStaticProps() {
       time: Date.now(),
       tags,
     })
-  }  
+  }
 
   return {
     props: {
@@ -49,7 +49,8 @@ export default function ListView({ datums }) {
       <Head>
         <title>Datums - Private Personal Information</title>
         <link rel="icon" href="icons/datums.ico" />
-        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+        <meta name="description" content="The privacy-focused app store for the open web." />
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1" />
         <meta name="theme-color" content="#0d0d0d" />
         <link rel="manifest" href="/manifest.json" />
       </Head>

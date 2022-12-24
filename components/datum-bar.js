@@ -120,9 +120,9 @@ export default function DatumBar() {
 		<InputBar>
 			<TagsContainer>
 				{state.tags.map(t => <Tag key={t.id} {...t} />)}
-				{state.newTagInputMode ? <NewTagInput /> : <NewTagButton />}
+				{state.newTagInputMode ? <NewTagInput /> : <NewTagButton aria-label="New Tag" />}
 			</TagsContainer>
-			<AddDatumButton>
+			<AddDatumButton aria-label="Add Datum">
 				<AddDatumButtonIcon />
 			</AddDatumButton>
 		</InputBar>
