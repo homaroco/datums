@@ -1,11 +1,12 @@
 import styled from 'styled-components'
-import { BsPlus as AddDatumButtonIcon} from 'react-icons/bs'
+import { BsPlus as AddDatumButtonIcon } from 'react-icons/bs'
 
 import Box from './box'
 
 const InputBar = styled(Box)`
-	position: sticky;
+	position: fixed;
 	bottom: 0;
+	width: 100%;
 	height: 50px;
 	border-top: 1px solid hsl(0, 0%, 20%);
 	justify-content: space-between;
