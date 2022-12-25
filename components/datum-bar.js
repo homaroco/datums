@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { BsPlus as AddDatumButtonIcon } from 'react-icons/bs'
 import { FaPlus } from 'react-icons/fa'
@@ -77,15 +77,19 @@ const AddDatumButton = styled.button`
 	aspect-ratio: 1 / 1;
 `
 
-const initTags = []
-for (let i = 0; i < 2; i++) {
-	initTags.push(getRandomTag({ values: false }))
-}
-
 export default function DatumBar() {
-	const [tags, setTags] = useState(initTags)
+	const [tags, setTags] = useState([])
 	const [inputValue, setInputValue] = useState('')
 	const [inputMode, setInputMode] = useState(false)
+
+	useEffect(() => {
+		const initTags = []
+		for (let i = 0; i < 2; i++) {
+			initTags.push(getRandomTag({ values: false }))
+		}
+		setTags(initTags)
+	}, [])
+
 
 	function convertButtonToInput() {
 		setInputMode(true)
