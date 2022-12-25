@@ -91,7 +91,7 @@ export default function Datum({
 			</Tags>
 			<RightItems>
 				<Timestamp>{getTimestamp(time)}</Timestamp>
-				<MenuButton>
+				<MenuButton aria-label="Datum Menu">
 					<MenuButtonIcon />
 				</MenuButton>
 			</RightItems>

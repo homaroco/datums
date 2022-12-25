@@ -109,23 +109,23 @@ const Title = styled.span`
 	animation: 30s linear infinite ${gradientAnimation};
 `
 
-export default function() {
+export default function () {
 	return (
 		<Header>
 			<LeftButtons>
-				<SortButton>
+				<SortButton aria-label="Sort Datums">
 					<SortIcon />
 				</SortButton>
-				<FilterButton>
+				<FilterButton aria-label="Filter Datums">
 					<FilterIcon />
 				</FilterButton>
 			</LeftButtons>
 			<Title>Datums</Title>
 			<RightButtons>
-				<ViewMenuButton>
+				<ViewMenuButton aria-label="Views Menu">
 					<TbGridDots />
 				</ViewMenuButton>
-				<SettingsMenuButton>
+				<SettingsMenuButton aria-label="Main Menu">
 					<HiMenu />
 				</SettingsMenuButton>
 			</RightButtons>
