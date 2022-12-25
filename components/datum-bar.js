@@ -76,20 +76,13 @@ const AddDatumButton = styled.button`
 	aspect-ratio: 1 / 1;
 `
 
-export async function getStaticProps() {
-	const initTags = []
-	for (let i = 0; i < 3; i++) {
-		initTags.push(getRandomTag({ values: false }))
-	}
-	return {
-		props: {
-			initTags
-		}
-	}
+const initTags = []
+for (let i = 0; i < 2; i++) {
+	initTags.push(getRandomTag({ values: false }))
 }
 
-export default function DatumBar({ initTags }) {
-	// const [tags, setTags] = useState(initTags)
+export default function DatumBar() {
+	const [tags, setTags] = useState(initTags)
 	const [inputValue, setInputValue] = useState('')
 	const [inputMode, setInputMode] = useState(false)
 
