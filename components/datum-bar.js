@@ -44,9 +44,6 @@ const TagInputButton = styled.button`
 `
 
 const TagInputButtonIcon = styled(FaPlus)`
-	/* padding: 10px; */
-	/* width: 20px;
-	height: 20px; */
 	margin-right: 5px;
 	margin-left: 3px;
 	font-size: 12px;
@@ -79,30 +76,33 @@ const AddDatumButton = styled.button`
 	aspect-ratio: 1 / 1;
 `
 
-const initTags = []
-for (let i = 0; i < 3; i++) {
-	initTags.push(getRandomTag({ values: true }))
+export async function getStaticProps() {
+	const initTags = []
+	for (let i = 0; i < 3; i++) {
+		initTags.push(getRandomTag({ values: false }))
+	}
+	return {
+		props: {
+			initTags
+		}
+	}
 }
 
-export default function DatumBar() {
-	const [state, setState] = useState({
-		tags: initTags,
-		input: '',
-		newTagInputMode: false,
-	})
+export default function DatumBar({ initTags }) {
+	// const [tags, setTags] = useState(initTags)
+	const [inputValue, setInputValue] = useState('')
+	const [inputMode, setInputMode] = useState(false)
 
 	function convertButtonToInput() {
-		setState({
-			...state,
-			newTagInputMode: true
-		})
+		setInputMode(true)
 	}
 
 	function convertInputToButton() {
-		setState({
-			...state,
-			newTagInputMode: false,
-		})
+		setInputMode(false)
+	}
+
+	function updateInputValue(e) {
+		setInputValue(e.target.value)
 	}
 
 	const NewTagButton = () => (
@@ -119,8 +119,11 @@ export default function DatumBar() {
 	return (
 		<InputBar>
 			<TagsContainer>
-				{state.tags.map(t => <Tag key={t.id} {...t} />)}
-				{state.newTagInputMode ? <NewTagInput /> : <NewTagButton />}
+				{initTags.map(t => <Tag key={t.id} {...t} />)}
+				{inputMode
+					? <NewTagInput value={inputValue} onChange={updateInputValue} />
+					: <NewTagButton />
+				}
 			</TagsContainer>
 			<AddDatumButton>
 				<AddDatumButtonIcon />
