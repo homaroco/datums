@@ -8,8 +8,9 @@ import Tag from '../components/tag.js'
 import { getRandomTag } from '../utils/random.js'
 
 const InputBar = styled(Box)`
-	position: sticky;
+	position: fixed;
 	bottom: 0;
+	width: 100%;
 	height: 50px;
 	border-top: 1px solid hsl(0, 0%, 20%);
 	justify-content: space-between;
@@ -112,13 +113,13 @@ export default function DatumBar() {
 	return (
 		<InputBar>
 			<TagsContainer>
-				{initTags.map(t => <Tag key={t.id} {...t} />)}
+				{tags.map(t => <Tag key={t.id} {...t} />)}
 				{inputMode
 					? <NewTagInput value={inputValue} onChange={updateInputValue} />
 					: <NewTagButton />
 				}
 			</TagsContainer>
-			<AddDatumButton>
+			<AddDatumButton aria-label="Add Datum">
 				<AddDatumButtonIcon />
 			</AddDatumButton>
 		</InputBar>
