@@ -35,7 +35,7 @@ export function Tag({ name, value, unit, color }: Tag) {
   if (unit) roundedValue = ''
   if (!value) padding = 'pr-[8px]'
   return (
-    <span className='inline-flex rounded overflow-hidden h-[30px] font-bold mr-[5px] whitespace-nowrap'>
+    <span className='inline-flex rounded overflow-hidden h-[30px] font-bold mr-[5px] whitespace-nowrap mb-[5px]'>
       <button className={`inline-flex relative items-center ${padding} pl-[8px]`} style={{ backgroundColor: color, color: getContrastColor(color) }}>{name}</button>
       {value && <button className={`inline-flex relative items-center px-[6px] border-2 ${roundedValue}`} style={{ color, borderColor: color, background: getContrastColor(color) }}>{value}</button>}
       {unit && <button className='pr-[6px] pl-[4px]' style={{ background: color, color: getContrastColor(color) }}>{unit}</button>}
@@ -45,10 +45,10 @@ export function Tag({ name, value, unit, color }: Tag) {
 
 export function Datum({ tags }: { tags: Tag[] }) {
   return (
-    <li className='flex relative items-center justify-between mx-[10px] border-b border-neutral-700 w-100%'>
+    <li className='flex relative items-center justify-between mx-[10px] border-b border-neutral-700 last:border-b-0 w-100%'>
       <span className='container inline-flex relative overflow-auto'>
         <span className='datum-tag-sub-container inline-flex relative grow justify-start overflow-auto'>
-          <span className='content inline-flex relative gap-[5px] py-[10px] pr-[20px]'>
+          <span className='content inline-flex relative pt-[10px] pb-[5px]'>
             {tags.map((tag, i) => <Tag key={i} {...tag} />)}
           </span>
         </span>
@@ -62,30 +62,31 @@ export function Datum({ tags }: { tags: Tag[] }) {
   )
 }
 
-export function TagNameMenu({ isVisible }: { isVisible: boolean }) {
-  const [demoTagNameColor, _] = useState('salmon')
-
-  let height = 'h-0 opacity-0'
+export function TagNameMenu({ isVisible, tags }: { isVisible: boolean, tags: Tag[] }) {
+  let height = 'max-h-0 opacity-0'
   let border = 'border-b-0'
   if (isVisible) {
-    height = 'h-[50px] opacity-100'
+    height = 'max-h-[150px] opacity-100'
     border = 'border-b-[1px]'
   }
   return (
-    <div className={`tag-name-menu px-[10px] w-full ${height}`}>
-      <div className={`flex justify-start w-full pt-[10px] border-neutral-700`}>
-        <Tag {...{ name: 'test', color: demoTagNameColor }} />
+    <div className={`tag-name-menu px-[10px] w-full ${height} overflow-scroll`}>
+      <div className={`${border} border-neutral-700`}>
+        <div className={`inline-flex flex-wrap justify-start w-auto pt-[10px] pb-[5px]`}>
+          {tags.map((tag: Tag, i: number) => <Tag key={i} {...{ name: tag.name, color: tag.color }} />)}
+        </div>
       </div>
     </div>
   )
 }
 
-export function ActiveDatum() {
+export function ActiveDatum({ tags }: { tags: Tag[] }) {
   const [newTagColor, setNewTagColor] = useState('')
   const [activeTags, setActiveTags] = useState<Tag[]>([])
   const [isNewTagBtnAnInput, setIsNewTagBtnAnInput] = useState(false)
   const [newTagNameInputValue, setNewTagNameInputValue] = useState('')
   const [isTagNameMenuVisible, setIsTagNameMenuVisible] = useState(false)
+
 
   useEffect(() => {
     setNewTagColor(getRandomHex(6))
@@ -133,8 +134,8 @@ export function ActiveDatum() {
 
   return (
     <>
-      <TagNameMenu isVisible={isTagNameMenuVisible} />
-      <div className='active-datum flex relative items-center justify-between w-full pl-2'>
+      <TagNameMenu isVisible={isTagNameMenuVisible} tags={tags} />
+      <div className='active-datum flex relative items-center justify-between w-full pl-[10px]'>
         <div className='flex'>{activeTags.map((tag, i) => <Tag key={i} {...tag} />)}
           {isNewTagBtnAnInput
             ? <form onSubmit={createTagName} className='flex items-center justify-center'>
@@ -160,15 +161,30 @@ export function ActiveDatum() {
 
 export default function App() {
   const [datums, setDatums] = useState([])
+  const [tags, setTags] = useState<Tag[]>([])
 
   useEffect(() => {
     fetch('http://localhost:3000/api/datums')
       .then(res => res.json())
-      .then(json => setDatums(json))
+      .then(json => {
+        setDatums(json)
+        const tags = getUniqueTagsFromDatums(json)
+        setTags(tags)
+      })
   }, [])
 
   function addActiveDatum() {
 
+  }
+
+  function getUniqueTagsFromDatums(datums: any[]) {
+    let tags: Tag[] = []
+    datums.forEach(datum => {
+      datum.tags.forEach((tag: Tag) => {
+        tags.push(tag)
+      })
+    })
+    return tags
   }
 
   return (
@@ -186,12 +202,12 @@ export default function App() {
         </span>
       </header>
       <section className='relative w-full h-full overflow-auto'>
-        <ul className='overflow-auto'>
+        <ul className='datum-list overflow-auto'>
           {datums.map((datum: any, i: number) => <Datum key={i} tags={datum.tags} />)}
         </ul>
       </section>
       <footer className='flex flex-col relative items-center justify-between bottom-0 h-auto w-full border-t border-neutral-700 bg-black'>
-        <ActiveDatum />
+        <ActiveDatum tags={tags} />
       </footer>
     </main >
   );
