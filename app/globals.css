@@ -80,3 +80,10 @@ body {
 .tag-fade {
 	background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 100%)
 }
+
+.new-tag-input {
+	-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+	-webkit-tap-highlight-color: transparent;
+	/* i.e. Nexus5/Chrome and Kindle Fire HD 7 */
+	outline: none;
+}

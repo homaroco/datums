@@ -10,7 +10,7 @@ import { LuArrowDownUp, LuListFilter } from "react-icons/lu";
 
 
 import { getRandomHex, getContrastColor } from './lib/utils.js'
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface Tag {
   name: string,
@@ -60,43 +60,40 @@ export function Datum({ tags }: { tags: Tag[] }) {
   )
 }
 
-const datums = [
-  {
-
-  }
-]
-
-
-
-function addActiveDatum(e) {
-
+export function TagNameMenu() {
+  return (
+    <div className='px-[10px] w-full'>
+      <div className='flex justify-start w-full py-[10px] border-b border-neutral-700'>
+        <Tag {...{ name: 'test', color: getRandomHex(6) }} />
+      </div>
+    </div>
+  )
 }
 
 export default function App() {
-  const [data, setData] = useState([])
-  const tags = [
-    {
-      name: 'test',
-      value: 'val',
-      color: getRandomHex(6)
-    },
-    {
-      name: 'another',
-      value: 'test',
-      unit: 'unit',
-      color: getRandomHex(6)
-    },
-    {
-      name: 'something long',
-      value: 'a long value',
-      color: getRandomHex(6)
-    }
-  ]
+  const [datums, setDatums] = useState([])
+  const [activeTags, setActiveTags] = useState([])
+  const [isTagNameMenuVisible, setIsTagNameMenuVisible] = useState(false)
+  const [isNewTagBtnAnInput, setIsNewTagBtnAnInput] = useState(false)
+
   useEffect(() => {
     fetch('http://localhost:3000/api/datums')
       .then(res => res.json())
-      .then(data => setData(data))
+      .then(json => setDatums(json))
   }, [])
+
+  function beginCreateActiveTag(e) {
+    setIsTagNameMenuVisible(true)
+    setIsNewTagBtnAnInput(true)
+  }
+
+  function endCreateActiveTag(e) {
+    if (e.target.value) return
+    setIsTagNameMenuVisible(false)
+    setIsNewTagBtnAnInput(false)
+  }
+
+
 
   return (
     <main className="flex flex-col w-full h-full items-center justify-between font-nunito text-sm ">
@@ -114,13 +111,19 @@ export default function App() {
       </header>
       <section className='relative w-full h-full overflow-auto'>
         <ul className='overflow-auto'>
-          {data.map((datum: any, i: number) => <Datum key={i} tags={datum.tags} />)}
+          {datums.map((datum: any, i: number) => <Datum key={i} tags={datum.tags} />)}
         </ul>
       </section>
-      <footer className='flex relative items-center justify-between bottom-0 h-auto w-full border-t border-neutral-700 bg-black'>
-        <button className='border rounded border-neutral-700 h-[30px] ml-2 px-2'>New tag</button>
-        <button className='flex items-center justify-center text-3xl w-[50px] h-[50px] text-neutral-500 active:hover:text-white'><FaPlus /></button>
+      <footer className='flex flex-col relative items-center justify-between bottom-0 h-auto w-full border-t border-neutral-700 bg-black'>
+        {isTagNameMenuVisible && <TagNameMenu />}
+        <div className='flex relative items-center justify-between w-full'>
+          {isNewTagBtnAnInput
+            ? <input autoFocus className='new-tag-input border rounded border-neutral-700 w-[80px] h-[30px] ml-2 px-2 bg-black focus:border-white' onBlur={endCreateActiveTag}></input>
+            : <button className='border rounded border-neutral-700 w-[80px] h-[30px] ml-2 px-2' onClick={beginCreateActiveTag}>New tag</button>
+          }
+          <button className='flex items-center justify-center text-3xl w-[50px] h-[50px] text-neutral-500 active:hover:text-white'><FaPlus /></button>
+        </div>
       </footer>
-    </main>
+    </main >
   );
 }
