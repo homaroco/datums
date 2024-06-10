@@ -10,7 +10,7 @@ import { LuArrowDownUp, LuListFilter } from "react-icons/lu";
 
 
 import { getRandomHex, getContrastColor } from './lib/utils.js'
-import React, { useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 
 interface Tag {
   name: string,
@@ -63,6 +63,8 @@ export function Datum({ tags }: { tags: Tag[] }) {
 }
 
 export function TagNameMenu({ isVisible }: { isVisible: boolean }) {
+  const [demoTagNameColor, _] = useState('salmon')
+
   let height = 'h-0 opacity-0'
   let border = 'border-b-0'
   if (isVisible) {
@@ -72,24 +74,22 @@ export function TagNameMenu({ isVisible }: { isVisible: boolean }) {
   return (
     <div className={`tag-name-menu px-[10px] w-full ${height}`}>
       <div className={`flex justify-start w-full pt-[10px] border-neutral-700`}>
-        <Tag {...{ name: 'test', color: getRandomHex(6) }} />
+        <Tag {...{ name: 'test', color: demoTagNameColor }} />
       </div>
     </div>
   )
 }
 
-export default function App() {
-  const [datums, setDatums] = useState([])
+export function ActiveDatum() {
+  const [newTagColor, setNewTagColor] = useState('')
   const [activeTags, setActiveTags] = useState<Tag[]>([])
-  const [isTagNameMenuVisible, setIsTagNameMenuVisible] = useState(false)
   const [isNewTagBtnAnInput, setIsNewTagBtnAnInput] = useState(false)
   const [newTagNameInputValue, setNewTagNameInputValue] = useState('')
+  const [isTagNameMenuVisible, setIsTagNameMenuVisible] = useState(false)
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/datums')
-      .then(res => res.json())
-      .then(json => setDatums(json))
-  }, [])
+    setNewTagColor(getRandomHex(6))
+  }, [activeTags])
 
   function beginCreateActiveTag() {
     setIsTagNameMenuVisible(true)
@@ -102,20 +102,73 @@ export default function App() {
     setIsNewTagBtnAnInput(false)
   }
 
-  function createTagName(e) {
+  function createTagName(e: any) {
+    e.preventDefault
     const tagName = newTagNameInputValue
-    // check if it exists already
+    // TODO check if it exists already
     // if not, add to tag name menu
 
     setActiveTags([
       ...activeTags,
       {
         name: tagName,
-        color: getRandomHex(6),
+        color: newTagColor,
       }
     ])
     setNewTagNameInputValue('')
     endCreateActiveTag(e)
+  }
+
+  function updateTagNameInputValue(e: any) {
+    console.log(e.target.key)
+    if (e.key === 'Enter') {
+      console.log('enter')
+      createTagName(e)
+    }
+    else setNewTagNameInputValue(e.target.value)
+  }
+
+  let rounded = 'rounded'
+  if (newTagNameInputValue.length) rounded = 'rounded-tl rounded-bl'
+
+  return (
+    <>
+      <TagNameMenu isVisible={isTagNameMenuVisible} />
+      <div className='active-datum flex relative items-center justify-between w-full pl-2'>
+        <div className='flex'>{activeTags.map((tag, i) => <Tag key={i} {...tag} />)}
+          {isNewTagBtnAnInput
+            ? <form onSubmit={createTagName} className='flex items-center justify-center'>
+              <input
+                className={`new-tag-input border ${rounded} border-neutral-700 w-[72px] h-[30px] px-2 bg-black focus:border-white`}
+                autoFocus
+                value={newTagNameInputValue}
+                onBlur={endCreateActiveTag}
+                onChange={updateTagNameInputValue}
+              ></input>
+              {newTagNameInputValue && <button className='flex items-center rounded-tr rounded-br justify-center w-[30px] h-[30px] text-lg text-black bg-white' onClick={createTagName}><FaPlus /></button>}
+            </form>
+            : <button
+              className='border rounded border-neutral-700 w-[72px] h-[30px] px-2'
+              onClick={beginCreateActiveTag}
+            >New tag</button>
+          }</div>
+        <button className='flex items-center justify-center text-3xl w-[50px] h-[50px] text-neutral-500 active:hover:text-white'><FaPlus /></button>
+      </div>
+    </>
+  )
+}
+
+export default function App() {
+  const [datums, setDatums] = useState([])
+
+  useEffect(() => {
+    fetch('http://localhost:3000/api/datums')
+      .then(res => res.json())
+      .then(json => setDatums(json))
+  }, [])
+
+  function addActiveDatum() {
+
   }
 
   return (
@@ -138,27 +191,7 @@ export default function App() {
         </ul>
       </section>
       <footer className='flex flex-col relative items-center justify-between bottom-0 h-auto w-full border-t border-neutral-700 bg-black'>
-        <TagNameMenu isVisible={isTagNameMenuVisible} />
-        <div className='active-datum flex relative items-center justify-between w-full pl-2'>
-          <div className='flex'>{activeTags.map(tag => <Tag {...tag} />)}
-            {isNewTagBtnAnInput
-              ? <span className='flex items-center justify-center'>
-                <input
-                  className='new-tag-input border rounded border-neutral-700 w-[80px] h-[30px] px-2 bg-black focus:border-white'
-                  autoFocus
-                  value={newTagNameInputValue}
-                  onBlur={endCreateActiveTag}
-                  onChange={(e) => setNewTagNameInputValue(e.target.value)}
-                ></input>
-                {newTagNameInputValue && <button className='flex justify-center w-[25px] text-lg' onClick={createTagName}><FaPlus /></button>}
-              </span>
-              : <button
-                className='border rounded border-neutral-700 w-[80px] h-[30px] px-2'
-                onClick={beginCreateActiveTag}
-              >New tag</button>
-            }</div>
-          <button className='flex items-center justify-center text-3xl w-[50px] h-[50px] text-neutral-500 active:hover:text-white'><FaPlus /></button>
-        </div>
+        <ActiveDatum />
       </footer>
     </main >
   );
