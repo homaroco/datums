@@ -87,3 +87,27 @@ body {
 	/* i.e. Nexus5/Chrome and Kindle Fire HD 7 */
 	outline: none;
 }
+
+.datum-tag-sub-container {
+	scrollbar-width: none;
+}
+
+.tag-name-menu {
+	transition: height .2s ease-in, opacity .2s ease-in;
+	/* animation-name: slide-up;
+	animation-duration: 1s; */
+}
+
+/* footer {
+	transition: height 1s ease-in;
+} */
+
+@keyframes slide-up {
+	from {
+		height: 0px;
+	}
+
+	to {
+		height: 50px;
+	}
+}
