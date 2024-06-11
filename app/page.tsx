@@ -178,7 +178,7 @@ export function ActiveDatum({ tags, addActiveDatum }: { tags: Tag[], addActiveDa
               onClick={beginCreateActiveTag}
             >New tag</button>
           }</div>
-        <button className='flex items-center justify-center text-3xl w-[50px] h-[50px] text-neutral-500 active:hover:text-white' onClick={submitActiveDatum}><FaPlus /></button>
+        {activeTags.length ? <button className='flex items-center justify-center text-3xl w-[50px] h-[50px] text-neutral-500 active:hover:text-white' onClick={submitActiveDatum}><FaPlus /></button> : null}
       </div>
     </>
   )
@@ -202,6 +202,7 @@ export default function App() {
     const latestDatum = datums.sort((a, b) => {
       return a.createdAt - b.createdAt
     })[datums.length - 1]
+    if (!latestDatum) return
     const datumEl = document.getElementById(latestDatum.id)
     if (datumEl) datumEl.scrollIntoView({ behavior: 'smooth' })
   }, [datums])

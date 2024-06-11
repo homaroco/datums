@@ -11,35 +11,35 @@ function color() {
 const initDatums = [
 	{
 		id: uuid(),
-		time: moment().valueOf(),
+		createdAt: moment().valueOf(),
 		tags: [
 			{ name: 'habit', value: 'make bed', color: color() },
 		]
 	},
 	{
 		id: uuid(),
-		time: moment().valueOf(),
+		createdAt: moment().valueOf(),
 		tags: [
 			{ name: 'habit', value: 'make bed', color: color() },
 		]
 	},
 	{
 		id: uuid(),
-		time: moment().valueOf(),
+		createdAt: moment().valueOf(),
 		tags: [
 			{ name: 'habit', value: 'make bed', color: color() },
 		]
 	},
 	{
 		id: uuid(),
-		time: moment().valueOf(),
+		createdAt: moment().valueOf(),
 		tags: [
 			{ name: 'habit', value: 'make bed', color: color() },
 		]
 	},
 	{
 		id: uuid(),
-		time: moment().valueOf(),
+		createdAt: moment().valueOf(),
 		tags: [
 			{ name: 'caffeine', value: 100, unit: 'mg', color: color() },
 			{ name: 'coffee', color: color() },
@@ -49,14 +49,14 @@ const initDatums = [
 	},
 	{
 		id: uuid(),
-		time: moment().valueOf(),
+		createdAt: moment().valueOf(),
 		tags: [
 			{ name: 'todo', value: 'pay bills', color: color() },
 		]
 	},
 	{
 		id: uuid(),
-		time: moment().valueOf(),
+		createdAt: moment().valueOf(),
 		tags: [
 			{ name: 'habit', value: 'meditate', color: color() },
 			{ name: 'start', value: 'meditate', color: color() },
@@ -64,28 +64,28 @@ const initDatums = [
 	},
 	{
 		id: uuid(),
-		time: moment().valueOf(),
+		createdAt: moment().valueOf(),
 		tags: [
 			{ name: 'stop', value: 'meditate', color: color() },
 		]
 	},
 	{
 		id: uuid(),
-		time: moment().valueOf(),
+		createdAt: moment().valueOf(),
 		tags: [
 			{ name: 'habit', value: 'no snooze', color: color() },
 		]
 	},
 	{
 		id: uuid(),
-		time: moment().valueOf(),
+		createdAt: moment().valueOf(),
 		tags: [
 			{ name: 'habit', value: 'make bed', color: color() },
 		]
 	},
 	{
 		id: uuid(),
-		time: moment().valueOf(),
+		createdAt: moment().valueOf(),
 		tags: [
 			{ name: '$', value: 23.57, color: color() },
 			{ name: 'gas', color: color() },
@@ -94,7 +94,7 @@ const initDatums = [
 	},
 	{
 		id: uuid(),
-		time: moment().valueOf(),
+		createdAt: moment().valueOf(),
 		tags: [
 			{ name: 'done', color: color() },
 			{ name: 'todo', value: 'dry cleaning', color: color() },
@@ -102,14 +102,14 @@ const initDatums = [
 	},
 	{
 		id: uuid(),
-		time: moment().valueOf(),
+		createdAt: moment().valueOf(),
 		tags: [
 			{ name: 'start', value: 'nap', color: color() },
 		]
 	},
 	{
 		id: uuid(),
-		time: moment().valueOf(),
+		createdAt: moment().valueOf(),
 		tags: [
 			{ name: 'stop', value: 'nap', color: color() },
 		]
