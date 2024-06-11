@@ -50,9 +50,9 @@ export function Tag({ name, value, unit, color }: Tag) {
   )
 }
 
-export function Datum({ tags }: { tags: Tag[] }) {
+export function Datum({ id, createdAt, tags }: Datum) {
   return (
-    <li className='flex relative items-center justify-between mx-[10px] h-[50px] border-b border-neutral-700 last:border-b-0 w-100%'>
+    <li id={`${id}`} className='flex relative items-center justify-between mx-[10px] h-[50px] border-b border-neutral-700 last:border-b-0 w-100%'>
       <span className='container inline-flex relative overflow-auto'>
         <span className='datum-tag-sub-container inline-flex relative grow justify-start overflow-auto'>
           <span className='content inline-flex relative'>
@@ -87,7 +87,7 @@ export function TagNameMenu({ isVisible, tags }: { isVisible: boolean, tags: Tag
   )
 }
 
-export function ActiveDatum({ tags, addActiveDatum }: { tags: Tag[], addActiveDatum: () => void }) {
+export function ActiveDatum({ tags, addActiveDatum }: { tags: Tag[], addActiveDatum: (tags: Tag[]) => void }) {
   const [newTagColor, setNewTagColor] = useState('')
   const [activeTags, setActiveTags] = useState<Tag[]>([])
   const [isNewTagBtnAnInput, setIsNewTagBtnAnInput] = useState(true)
@@ -145,6 +145,11 @@ export function ActiveDatum({ tags, addActiveDatum }: { tags: Tag[], addActiveDa
     else setNewTagNameInputValue(e.target.value)
   }
 
+  function submitActiveDatum() {
+    addActiveDatum(activeTags)
+    setActiveTags([])
+  }
+
   let rounded = 'rounded'
   if (newTagNameInputValue.length) rounded = 'rounded-tl rounded-bl'
 
@@ -173,7 +178,7 @@ export function ActiveDatum({ tags, addActiveDatum }: { tags: Tag[], addActiveDa
               onClick={beginCreateActiveTag}
             >New tag</button>
           }</div>
-        <button className='flex items-center justify-center text-3xl w-[50px] h-[50px] text-neutral-500 active:hover:text-white' onClick={() => addActiveDatum(activeTags)}><FaPlus /></button>
+        <button className='flex items-center justify-center text-3xl w-[50px] h-[50px] text-neutral-500 active:hover:text-white' onClick={submitActiveDatum}><FaPlus /></button>
       </div>
     </>
   )
@@ -193,6 +198,14 @@ export default function App() {
       })
   }, [])
 
+  useEffect(() => {
+    const latestDatum = datums.sort((a, b) => {
+      return a.createdAt - b.createdAt
+    })[datums.length - 1]
+    const datumEl = document.getElementById(latestDatum.id)
+    if (datumEl) datumEl.scrollIntoView({ behavior: 'smooth' })
+  }, [datums])
+
   function addActiveDatum(tags: Tag[]) {
     setDatums([
       ...datums,
@@ -203,6 +216,8 @@ export default function App() {
       }
     ])
   }
+
+
 
   function getUniqueTagsFromDatums(datums: any[]) {
     let tags: Tag[] = []
@@ -229,8 +244,8 @@ export default function App() {
         </span>
       </header>
       <section className='relative w-full h-full overflow-auto'>
-        <ul className='datum-list overflow-auto'>
-          {datums.map((datum: any, i: number) => <Datum key={i} tags={datum.tags} />)}
+        <ul id='datum-list' className='datum-list overflow-auto'>
+          {datums.map((datum: any, i: number) => <Datum key={datum.id} {...datum} />)}
         </ul>
       </section>
       <footer className='flex flex-col relative items-center justify-between bottom-0 h-auto w-full border-t border-neutral-700 bg-black'>
