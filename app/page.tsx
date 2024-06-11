@@ -7,6 +7,7 @@ import {
 import { BsThreeDots } from "react-icons/bs";
 import { TbGridDots } from "react-icons/tb";
 import { LuArrowDownUp, LuListFilter } from "react-icons/lu";
+import { v4 as uuid } from 'uuid'
 
 
 import { getRandomHex, getContrastColor } from './lib/utils.js'
@@ -17,6 +18,12 @@ interface Tag {
   color: string,
   value?: string,
   unit?: string,
+}
+
+interface Datum {
+  id: string,
+  createdAt: number,
+  tags: Tag[],
 }
 
 // flex items-center justify-center text-3xl w-[50px] text-neutral-500 active:hover:text-white
@@ -45,14 +52,14 @@ export function Tag({ name, value, unit, color }: Tag) {
 
 export function Datum({ tags }: { tags: Tag[] }) {
   return (
-    <li className='flex relative items-center justify-between mx-[10px] border-b border-neutral-700 last:border-b-0 w-100%'>
+    <li className='flex relative items-center justify-between mx-[10px] h-[50px] border-b border-neutral-700 last:border-b-0 w-100%'>
       <span className='container inline-flex relative overflow-auto'>
         <span className='datum-tag-sub-container inline-flex relative grow justify-start overflow-auto'>
-          <span className='content inline-flex relative pt-[10px] pb-[5px]'>
+          <span className='content inline-flex relative'>
             {tags.map((tag, i) => <Tag key={i} {...tag} />)}
           </span>
         </span>
-        <span className='tag-fade absolute right-0 top-[10px] w-[30px] h-[30px]'></span>
+        <span className='tag-fade absolute right-0 w-[30px] h-[30px]'></span>
       </span>
       <span className='flex'>
         <span className='flex items-center text-xs ml-[10px] text-neutral-600'>1h</span>
@@ -73,14 +80,14 @@ export function TagNameMenu({ isVisible, tags }: { isVisible: boolean, tags: Tag
     <div className={`tag-name-menu px-[10px] w-full ${height} overflow-scroll`}>
       <div className={`${border} border-neutral-700`}>
         <div className={`inline-flex flex-wrap justify-start w-auto pt-[10px] pb-[5px]`}>
-          {tags.map((tag: Tag, i: number) => <Tag key={i} {...{ name: tag.name, color: tag.color }} />)}
+          {tags.map((tag: Tag, i: number) => <span key={i} className='pb-[5px]'><Tag {...{ name: tag.name, color: tag.color }} /></span>)}
         </div>
       </div>
     </div>
   )
 }
 
-export function ActiveDatum({ tags }: { tags: Tag[] }) {
+export function ActiveDatum({ tags, addActiveDatum }: { tags: Tag[], addActiveDatum: () => void }) {
   const [newTagColor, setNewTagColor] = useState('')
   const [activeTags, setActiveTags] = useState<Tag[]>([])
   const [isNewTagBtnAnInput, setIsNewTagBtnAnInput] = useState(true)
@@ -166,14 +173,14 @@ export function ActiveDatum({ tags }: { tags: Tag[] }) {
               onClick={beginCreateActiveTag}
             >New tag</button>
           }</div>
-        <button className='flex items-center justify-center text-3xl w-[50px] h-[50px] text-neutral-500 active:hover:text-white'><FaPlus /></button>
+        <button className='flex items-center justify-center text-3xl w-[50px] h-[50px] text-neutral-500 active:hover:text-white' onClick={() => addActiveDatum(activeTags)}><FaPlus /></button>
       </div>
     </>
   )
 }
 
 export default function App() {
-  const [datums, setDatums] = useState([])
+  const [datums, setDatums] = useState<Datum[]>([])
   const [tags, setTags] = useState<Tag[]>([])
 
   useEffect(() => {
@@ -186,8 +193,15 @@ export default function App() {
       })
   }, [])
 
-  function addActiveDatum() {
-
+  function addActiveDatum(tags: Tag[]) {
+    setDatums([
+      ...datums,
+      {
+        id: uuid(),
+        createdAt: Date.now(),
+        tags,
+      }
+    ])
   }
 
   function getUniqueTagsFromDatums(datums: any[]) {
@@ -220,7 +234,7 @@ export default function App() {
         </ul>
       </section>
       <footer className='flex flex-col relative items-center justify-between bottom-0 h-auto w-full border-t border-neutral-700 bg-black'>
-        <ActiveDatum tags={tags} />
+        <ActiveDatum tags={tags} addActiveDatum={addActiveDatum} />
       </footer>
     </main >
   );
