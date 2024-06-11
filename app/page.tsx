@@ -35,7 +35,7 @@ export function Tag({ name, value, unit, color }: Tag) {
   if (unit) roundedValue = ''
   if (!value) padding = 'pr-[8px]'
   return (
-    <span className='inline-flex rounded overflow-hidden h-[30px] font-bold mr-[5px] whitespace-nowrap mb-[5px]'>
+    <span className='inline-flex rounded overflow-hidden h-[30px] font-bold mr-[5px] whitespace-nowrap'>
       <button className={`inline-flex relative items-center ${padding} pl-[8px]`} style={{ backgroundColor: color, color: getContrastColor(color) }}>{name}</button>
       {value && <button className={`inline-flex relative items-center px-[6px] border-2 ${roundedValue}`} style={{ color, borderColor: color, background: getContrastColor(color) }}>{value}</button>}
       {unit && <button className='pr-[6px] pl-[4px]' style={{ background: color, color: getContrastColor(color) }}>{unit}</button>}
@@ -144,25 +144,25 @@ export function ActiveDatum({ tags }: { tags: Tag[] }) {
   return (
     <>
       <TagNameMenu isVisible={isTagNameMenuVisible} tags={tags} />
-      <div className='active-datum flex relative items-center justify-between w-full pl-[10px]'>
+      <div className='active-datum flex relative items-center justify-between w-full h-[50px] pl-[10px]'>
         <div className='flex'>{activeTags.map((tag, i) => <Tag key={i} {...tag} />)}
           {isNewTagBtnAnInput
             ? <form onSubmit={createTagName} className='flex items-center justify-center'>
               <input
-                className={`new-tag-input border ${rounded} border-neutral-700 h-[30px] pl-[8px] pr-[5px] bg-black focus:border-white text-neutral-700 focus:text-white`}
+                className={`new-tag-input flex items-center border ${rounded} px-[5px] h-[30px] pb-[1px] w-[66px] border-neutral-700 bg-black focus:border-white text-neutral-700 focus:text-white`}
                 autoFocus
                 placeholder='New tag'
                 value={newTagNameInputValue}
                 onBlur={endCreateActiveTag}
                 onFocus={() => setIsNewTagNameInputFocused(true)}
                 onChange={updateTagNameInputValue}
-                style={{ width: inputWidth + 8 + 'px' }}
+              // style={{ width: inputWidth > 60 ? inputWidth + 15 + 'px' : '66px' }}
               ></input>
               {<span ref={newTagNameDummyRef} className='dummy-tag-name absolute opacity-0 -z-10'>{newTagNameInputValue}</span>}
               {newTagNameInputValue && <button className={`flex items-center rounded-tr rounded-br justify-center w-[30px] h-[30px] text-lg text-black ${isNewTagNameInputFocused ? 'bg-white' : 'bg-neutral-700'}`} onClick={createTagName}><FaPlus /></button>}
             </form>
             : <button
-              className='border rounded border-neutral-700 w-[72px] h-[30px] px-[5px]'
+              className='border rounded border-neutral-700 px-[5px] h-[30px] w-[66px]'
               onClick={beginCreateActiveTag}
             >New tag</button>
           }</div>
