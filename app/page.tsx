@@ -10,7 +10,7 @@ import { LuArrowDownUp, LuListFilter } from "react-icons/lu";
 
 
 import { getRandomHex, getContrastColor } from './lib/utils.js'
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, RefObject, useEffect, useRef, useState } from 'react';
 
 interface Tag {
   name: string,
@@ -83,14 +83,24 @@ export function TagNameMenu({ isVisible, tags }: { isVisible: boolean, tags: Tag
 export function ActiveDatum({ tags }: { tags: Tag[] }) {
   const [newTagColor, setNewTagColor] = useState('')
   const [activeTags, setActiveTags] = useState<Tag[]>([])
-  const [isNewTagBtnAnInput, setIsNewTagBtnAnInput] = useState(false)
+  const [isNewTagBtnAnInput, setIsNewTagBtnAnInput] = useState(true)
   const [newTagNameInputValue, setNewTagNameInputValue] = useState('')
   const [isTagNameMenuVisible, setIsTagNameMenuVisible] = useState(false)
+  const [isNewTagNameInputFocused, setIsNewTagNameInputFocused] = useState(false)
+  const [inputWidth, setInputWidth] = useState(72) // width of 'New tag'
 
+  const newTagNameDummyRef = useRef(null)
 
   useEffect(() => {
     setNewTagColor(getRandomHex(6))
   }, [activeTags])
+
+  useEffect(() => {
+    if (newTagNameDummyRef.current) {
+      setInputWidth(newTagNameDummyRef.current.offsetWidth || 72)
+    }
+  }, [newTagNameInputValue])
+
 
   function beginCreateActiveTag() {
     setIsTagNameMenuVisible(true)
@@ -98,6 +108,7 @@ export function ActiveDatum({ tags }: { tags: Tag[] }) {
   }
 
   function endCreateActiveTag(e: { target: { value: any; }; }) {
+    setIsNewTagNameInputFocused(false)
     if (e.target.value) return
     setIsTagNameMenuVisible(false)
     setIsNewTagBtnAnInput(false)
@@ -121,9 +132,7 @@ export function ActiveDatum({ tags }: { tags: Tag[] }) {
   }
 
   function updateTagNameInputValue(e: any) {
-    console.log(e.target.key)
     if (e.key === 'Enter') {
-      console.log('enter')
       createTagName(e)
     }
     else setNewTagNameInputValue(e.target.value)
@@ -140,16 +149,20 @@ export function ActiveDatum({ tags }: { tags: Tag[] }) {
           {isNewTagBtnAnInput
             ? <form onSubmit={createTagName} className='flex items-center justify-center'>
               <input
-                className={`new-tag-input border ${rounded} border-neutral-700 w-[72px] h-[30px] px-2 bg-black focus:border-white`}
+                className={`new-tag-input border ${rounded} border-neutral-700 h-[30px] pl-[8px] pr-[5px] bg-black focus:border-white text-neutral-700 focus:text-white`}
                 autoFocus
+                placeholder='New tag'
                 value={newTagNameInputValue}
                 onBlur={endCreateActiveTag}
+                onFocus={() => setIsNewTagNameInputFocused(true)}
                 onChange={updateTagNameInputValue}
+                style={{ width: inputWidth + 8 + 'px' }}
               ></input>
-              {newTagNameInputValue && <button className='flex items-center rounded-tr rounded-br justify-center w-[30px] h-[30px] text-lg text-black bg-white' onClick={createTagName}><FaPlus /></button>}
+              {<span ref={newTagNameDummyRef} className='dummy-tag-name absolute opacity-0 -z-10'>{newTagNameInputValue}</span>}
+              {newTagNameInputValue && <button className={`flex items-center rounded-tr rounded-br justify-center w-[30px] h-[30px] text-lg text-black ${isNewTagNameInputFocused ? 'bg-white' : 'bg-neutral-700'}`} onClick={createTagName}><FaPlus /></button>}
             </form>
             : <button
-              className='border rounded border-neutral-700 w-[72px] h-[30px] px-2'
+              className='border rounded border-neutral-700 w-[72px] h-[30px] px-[5px]'
               onClick={beginCreateActiveTag}
             >New tag</button>
           }</div>
@@ -188,7 +201,7 @@ export default function App() {
   }
 
   return (
-    <main className="flex flex-col w-full h-full items-center justify-between font-nunito text-sm ">
+    <main className="flex flex-col w-full h-full items-center justify-between font-nunito text-sm text-neutral-700">
 
       <header className='flex relative top-0 w-full justify-between items-center h-[50px] border-b border-neutral-700 shadow-lg text-2xl bg-black z-10'>
         <span className='flex h-full'>

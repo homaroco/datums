@@ -133,6 +133,5 @@ export function GET(req: Request) {
 			tags,
 		})
 	}
-	console.log(initDatums)
 	return Response.json(initDatums)
 }
