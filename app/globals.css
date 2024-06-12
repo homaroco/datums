@@ -111,6 +111,16 @@ footer {
 	}
 }
 
+@keyframes fadeIn {
+	0% {
+		opacity: 0;
+	}
+
+	100% {
+		opacity: 1;
+	}
+}
+
 .tag-fade {
 	background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 100%)
 }
@@ -145,4 +155,10 @@ footer {
 	to {
 		height: 50px;
 	}
+}
+
+.datum-menu {
+	box-shadow: rgba(0, 0, 0, 0.75) 0px 5px 5px 5px;
+	animation-name: fadeIn;
+	animation-duration: .2s;
 }

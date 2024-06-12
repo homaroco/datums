@@ -52,6 +52,7 @@ export function Tag({ name, value, unit, color }: Tag) {
 }
 
 export function Datum({ id, createdAt, tags }: Datum) {
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false)
   return (
     <li id={`${id}`} className='flex relative items-center justify-between mx-[10px] h-[50px] border-b border-neutral-700 last:border-b-0 w-100%'>
       <span className='container inline-flex relative overflow-auto'>
@@ -64,8 +65,13 @@ export function Datum({ id, createdAt, tags }: Datum) {
       </span>
       <span className='flex'>
         <span className='flex items-center text-xs ml-[10px] text-neutral-600'>{getTimestamp(createdAt)}</span>
-        <button className='flex items-center justify-center text-2xl ml-[10px]'><BsThreeDots /></button>
+        <button className='flex items-center justify-center text-2xl ml-[10px]' onClick={() => setIsMenuOpen(!isMenuOpen)}><BsThreeDots /></button>
       </span>
+      {isMenuOpen && <div className='fixed top-0 left-0 right-0 bottom-0 z-20' onClick={() => setIsMenuOpen(false)}></div>}
+      {isMenuOpen && <div className='datum-menu flex absolute flex-col items-center justify-center px-[10px] bg-black right-[25px] bottom-[25px] border border-white rounded text-[16px] text-white z-30'>
+        <span className='p-[10px] w-full text-center border-b border-white'>Edit</span>
+        <span className='p-[10px] w-full text-center'>Delete</span>
+      </div>}
     </li>
   )
 }
