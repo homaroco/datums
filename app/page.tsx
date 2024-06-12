@@ -12,6 +12,7 @@ import { v4 as uuid } from 'uuid'
 
 import { getRandomHex, getContrastColor } from './lib/utils.js'
 import React, { ChangeEvent, RefObject, useEffect, useRef, useState } from 'react';
+import { getTimestamp } from './lib/time';
 
 interface Tag {
   name: string,
@@ -62,7 +63,7 @@ export function Datum({ id, createdAt, tags }: Datum) {
         <span className='tag-fade absolute right-0 w-[30px] h-[30px]'></span>
       </span>
       <span className='flex'>
-        <span className='flex items-center text-xs ml-[10px] text-neutral-600'>1h</span>
+        <span className='flex items-center text-xs ml-[10px] text-neutral-600'>{getTimestamp(createdAt)}</span>
         <button className='flex items-center justify-center text-2xl ml-[10px]'><BsThreeDots /></button>
       </span>
     </li>
@@ -240,7 +241,7 @@ export default function App() {
   return (
     <main className="flex flex-col w-full h-full items-center justify-between font-nunito text-sm text-neutral-700">
 
-      <header className='flex relative top-0 w-full justify-between items-center h-[50px] border-b border-neutral-700 shadow-lg text-2xl bg-black z-10'>
+      <header className='flex relative top-0 w-full justify-between items-center h-[50px] border-b border-neutral-700 text-2xl bg-black z-10'>
         <span className='flex h-full'>
           <button className='flex items-center justify-center p-2 w-[50px]' aria-label='Sort Datums'><LuArrowDownUp /></button>
           <button className='flex items-center justify-center p-2 w-[50px] text-3xl' aria-label='Filter Datums'><LuListFilter /></button>

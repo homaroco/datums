@@ -53,6 +53,15 @@ input::placeholder {
 	text-align: center;
 }
 
+header {
+	box-shadow: rgba(0, 0, 0, 0.75) 0px -10px 15px 15px;
+}
+
+footer {
+	box-shadow: rgba(0, 0, 0, 0.75) 0px 10px 15px 15px;
+
+}
+
 @layer utilities {
 	.text-balance {
 		text-wrap: balance;
