@@ -69,7 +69,7 @@ export function Datum({ id, createdAt, tags }: Datum) {
   )
 }
 
-export function TagNameMenu({ isVisible, tags }: { isVisible: boolean, tags: Tag[] }) {
+export function TagNameMenu({ isVisible, tags, addToActiveTags }: { isVisible: boolean, tags: Tag[], addToActiveTags: (tag: Tag) => void }) {
   let height = 'max-h-0 opacity-0'
   let border = 'border-b-0'
   if (isVisible) {
@@ -80,7 +80,7 @@ export function TagNameMenu({ isVisible, tags }: { isVisible: boolean, tags: Tag
     <div className={`tag-name-menu px-[10px] w-full ${height} overflow-scroll`}>
       <div className={`${border} border-neutral-700`}>
         <div className={`inline-flex flex-wrap justify-start w-auto pt-[10px] pb-[5px]`}>
-          {tags.map((tag: Tag, i: number) => <span key={i} className='pb-[5px]'><Tag {...{ name: tag.name, color: tag.color }} /></span>)}
+          {tags.map((tag: Tag, i: number) => <span onClick={() => addToActiveTags(tag)} key={i} className='pb-[5px]'><Tag {...{ name: tag.name, color: tag.color }} /></span>)}
         </div>
       </div>
     </div>
@@ -150,12 +150,19 @@ export function ActiveDatum({ tags, addActiveDatum }: { tags: Tag[], addActiveDa
     setActiveTags([])
   }
 
+  function addToActiveTags(tag: Tag) {
+    setActiveTags([
+      ...activeTags,
+      tag
+    ])
+  }
+
   let rounded = 'rounded'
   if (newTagNameInputValue.length) rounded = 'rounded-tl rounded-bl'
 
   return (
     <>
-      <TagNameMenu isVisible={isTagNameMenuVisible} tags={tags} />
+      <TagNameMenu isVisible={isTagNameMenuVisible} tags={tags} addToActiveTags={addToActiveTags} />
       <div className='active-datum flex relative items-center justify-between w-full h-[50px] pl-[10px]'>
         <div className='flex'>{activeTags.map((tag, i) => <Tag key={i} {...tag} />)}
           {isNewTagBtnAnInput
