@@ -88,8 +88,7 @@ function getValuesForTagName(tagName: string, tags: Tag[]) {
   return values
 }
 
-export function TagNameMenu({ isVisible, tags, convertToValuelessTag }: { isVisible: boolean, tags: Tag[], convertToValuelessTag: (tag: Tag) => void }) {
-  const [activeTagNameTag, setActiveTagNameTag] = useState<Tag | null>(null)
+export function TagNameMenu({ isVisible, tags, convertToValuelessTag, createNameTagFromButton }: { isVisible: boolean, tags: Tag[], convertToValuelessTag: (tag: Tag) => void, createNameTagFromButton: (tag: Tag) => void }) {
   const uniqueTagNames = tags.filter((tag, i) => tags.findIndex(t => tag.name === t.name) === i)
   const uniqueNameTags = uniqueTagNames.map((tag: Tag, i: number) =>
     <span
@@ -102,10 +101,12 @@ export function TagNameMenu({ isVisible, tags, convertToValuelessTag }: { isVisi
     </span>
   )
 
-  function selectTag(tag) {
-    console.log('selectTag tag:', tag)
-    setActiveTagNameTag(tag)
-    convertToValuelessTag(tag)
+  function selectTag(tag: Tag) {
+    if (!tag.value) {
+      createNameTagFromButton(tag)
+    } else {
+      convertToValuelessTag(tag)
+    }
   }
 
   let height = 'max-h-0 opacity-0'
@@ -195,7 +196,7 @@ export function ActiveDatum({ tags, addActiveDatum }: { tags: Tag[], addActiveDa
     setIsTagNameMenuVisible(false)
   }
 
-  function createTagName(e: any) {
+  function createTagNameFromInput(e: any) {
     e.preventDefault()
     const tagName = newTagNameInputValue
     // TODO check if it exists already
@@ -212,9 +213,17 @@ export function ActiveDatum({ tags, addActiveDatum }: { tags: Tag[], addActiveDa
     endCreateActiveTag(e)
   }
 
+  function addNameTagToStaging(tag: Tag) {
+    setActiveTags([
+      ...activeTags,
+      tag,
+    ])
+
+  }
+
   function updateTagNameInputValue(e: any) {
     if (e.key === 'Enter') {
-      createTagName(e)
+      createTagNameFromInput(e)
     }
     else setNewTagNameInputValue(e.target.value)
   }
@@ -251,12 +260,12 @@ export function ActiveDatum({ tags, addActiveDatum }: { tags: Tag[], addActiveDa
 
   return (
     <>
-      <TagNameMenu isVisible={isTagNameMenuVisible} tags={tags} convertToValuelessTag={convertToValuelessTag} />
+      <TagNameMenu isVisible={isTagNameMenuVisible} tags={tags} convertToValuelessTag={convertToValuelessTag} createNameTagFromButton={addNameTagToStaging} />
       <TagValueMenu isVisible={isTagValueMenuVisible} nameTag={currentValuelessTag} tags={tags} onClick={addValueToActiveTag} />
       <div className='active-datum flex relative items-center justify-between w-full h-[50px] pl-[10px]'>
         <div className='flex'>{activeTags.map((tag, i) => <Tag key={i} {...tag} />)}
 
-          <form onSubmit={createTagName} className='flex items-center justify-center'>
+          <form onSubmit={createTagNameFromInput} className='flex items-center justify-center'>
             {
               currentValuelessTag
                 ? <DatumBarValueInput
@@ -274,7 +283,7 @@ export function ActiveDatum({ tags, addActiveDatum }: { tags: Tag[], addActiveDa
                   tagNameTag={currentValuelessTag}
                 />
             }
-            {newTagNameInputValue && <button className={`flex items-center rounded-tr rounded-br justify-center w-[30px] h-[30px] text-lg text-black ${isNewTagNameInputFocused ? 'bg-white' : 'bg-neutral-700'}`} onClick={createTagName}><FaPlus /></button>}
+            {newTagNameInputValue && <button className={`flex items-center rounded-tr rounded-br justify-center w-[30px] h-[30px] text-lg text-black ${isNewTagNameInputFocused ? 'bg-white' : 'bg-neutral-700'}`} onClick={createTagNameFromInput}><FaPlus /></button>}
           </form>
         </div>
         {activeTags.length ? <button className='flex items-center justify-center text-3xl w-[50px] h-[50px] text-neutral-500 active:hover:text-white' onClick={submitActiveDatum}><FaPlus /></button> : null}
