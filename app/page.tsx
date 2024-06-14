@@ -69,8 +69,8 @@ export function Datum({ id, createdAt, tags }: Datum) {
       </span>
       {isMenuOpen && <div className='fixed top-0 left-0 right-0 bottom-0 z-20' onClick={() => setIsMenuOpen(false)}></div>}
       {isMenuOpen && <div className='datum-menu flex absolute flex-col items-center justify-center px-[10px] bg-black right-[25px] bottom-[25px] border border-white rounded text-[16px] text-white z-30'>
-        <span className='p-[10px] w-full text-center border-b border-white'>Edit</span>
-        <span className='p-[10px] w-full text-center'>Delete</span>
+        <span className='py-[10px] w-full text-center border-b border-white'>Edit</span>
+        <span className='py-[10px] w-full text-center'>Delete</span>
       </div>}
     </li>
   )
@@ -83,11 +83,21 @@ export function TagNameMenu({ isVisible, tags, addToActiveTags }: { isVisible: b
     height = 'max-h-[150px] opacity-100'
     border = 'border-b-[1px]'
   }
+  const unique = (items: any) => [...new Set(items)]
+
+  const uniqueTagNames = tags.filter((tag, i) => tags.findIndex(t => tag.name === t.name) === i)
   return (
     <div className={`tag-name-menu px-[10px] w-full ${height} overflow-scroll`}>
       <div className={`${border} border-neutral-700`}>
         <div className={`inline-flex flex-wrap justify-start w-auto pt-[10px] pb-[5px]`}>
-          {tags.map((tag: Tag, i: number) => <span onClick={() => addToActiveTags(tag)} key={i} className='pb-[5px]'><Tag {...{ name: tag.name, color: tag.color }} /></span>)}
+          {uniqueTagNames.map((tag: Tag, i: number) =>
+            <span
+              onClick={() => addToActiveTags(tag)}
+              key={i}
+              className='pb-[5px]'>
+              <Tag {...{ name: tag.name, color: tag.color }} />
+            </span>
+          )}
         </div>
       </div>
     </div>
