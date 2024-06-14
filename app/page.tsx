@@ -15,8 +15,8 @@ import React, { ChangeEvent, RefObject, useEffect, useRef, useState } from 'reac
 import { getTimestamp } from './lib/time';
 
 interface Tag {
-  name: string,
   color: string,
+  name?: string,
   value?: string,
   unit?: string,
 }
@@ -44,7 +44,7 @@ export function Tag({ name, value, unit, color }: Tag) {
   if (!value) padding = 'pr-[8px]'
   return (
     <span className='inline-flex rounded overflow-hidden h-[30px] font-bold mr-[5px] whitespace-nowrap'>
-      <button className={`inline-flex relative items-center ${padding} pl-[8px]`} style={{ backgroundColor: color, color: getContrastColor(color) }}>{name}</button>
+      {name && <button className={`inline-flex relative items-center ${padding} pl-[8px]`} style={{ backgroundColor: color, color: getContrastColor(color) }}>{name}</button>}
       {value && <button className={`inline-flex relative items-center px-[6px] border-2 ${roundedValue}`} style={{ color, borderColor: color, background: getContrastColor(color) }}>{value}</button>}
       {unit && <button className='pr-[6px] pl-[4px]' style={{ background: color, color: getContrastColor(color) }}>{unit}</button>}
     </span>
@@ -76,28 +76,54 @@ export function Datum({ id, createdAt, tags }: Datum) {
   )
 }
 
-export function TagNameMenu({ isVisible, tags, addToActiveTags }: { isVisible: boolean, tags: Tag[], addToActiveTags: (tag: Tag) => void }) {
+function getValuesForTagName(tagName: string, tags: Tag[]) {
+  let values: string[] = []
+  tags.forEach((tag: Tag) => {
+    if (
+      tag.name === tagName
+      && tag.value !== undefined
+      && values.indexOf(tag.value) === -1
+    ) values.push(tag.value)
+  })
+  return values
+}
+
+export function TagMenu({ isVisible, tags, convertToValuelessTag }: { isVisible: boolean, tags: Tag[], convertToValuelessTag: (tag: Tag) => void }) {
+  const [activeTagNameTag, setactiveTagNameTag] = useState<Tag | null>(null)
+  const uniqueTagNames = tags.filter((tag, i) => tags.findIndex(t => tag.name === t.name) === i)
+  const uniqueNameTags = uniqueTagNames.map((tag: Tag, i: number) =>
+    <span
+      onClick={(tag) => selectTag(tag)}
+      key={i}
+      className='pb-[5px]'>
+      <Tag {...{ name: tag.name, color: tag.color }} />
+    </span>
+  )
+
+  function selectTag(tag) {
+    setactiveTagNameTag(tag)
+    convertToValuelessTag(tag)
+  }
+
+  const uniqueTagValues = getValuesForTagName(activeTagNameTag?.name, tags)
+  const uniqueValueTags = uniqueTagValues.map((value: string, i: number) =>
+    <span
+      key={i}
+      className='pb-[5px]'>
+      <Tag {...{ value, color: activeTagNameTag.color }} />
+    </span>
+  )
   let height = 'max-h-0 opacity-0'
   let border = 'border-b-0'
   if (isVisible) {
     height = 'max-h-[150px] opacity-100'
     border = 'border-b-[1px]'
   }
-  const unique = (items: any) => [...new Set(items)]
-
-  const uniqueTagNames = tags.filter((tag, i) => tags.findIndex(t => tag.name === t.name) === i)
   return (
     <div className={`tag-name-menu px-[10px] w-full ${height} overflow-scroll`}>
       <div className={`${border} border-neutral-700`}>
         <div className={`inline-flex flex-wrap justify-start w-auto pt-[10px] pb-[5px]`}>
-          {uniqueTagNames.map((tag: Tag, i: number) =>
-            <span
-              onClick={() => addToActiveTags(tag)}
-              key={i}
-              className='pb-[5px]'>
-              <Tag {...{ name: tag.name, color: tag.color }} />
-            </span>
-          )}
+          {activeTagNameTag ? uniqueValueTags : uniqueNameTags}
         </div>
       </div>
     </div>
@@ -107,7 +133,8 @@ export function TagNameMenu({ isVisible, tags, addToActiveTags }: { isVisible: b
 export function ActiveDatum({ tags, addActiveDatum }: { tags: Tag[], addActiveDatum: (tags: Tag[]) => void }) {
   const [newTagColor, setNewTagColor] = useState('')
   const [activeTags, setActiveTags] = useState<Tag[]>([])
-  const [isNewTagBtnAnInput, setIsNewTagBtnAnInput] = useState(true)
+  const [currentValuelessTag, setCurrentValuelessTag] = useState<Tag | null>(null)
+  const [isNewTagBtnAnInput, setIsNewTagBtnAnInput] = useState(false)
   const [newTagNameInputValue, setNewTagNameInputValue] = useState('')
   const [isTagNameMenuVisible, setIsTagNameMenuVisible] = useState(false)
   const [isNewTagNameInputFocused, setIsNewTagNameInputFocused] = useState(false)
@@ -134,7 +161,7 @@ export function ActiveDatum({ tags, addActiveDatum }: { tags: Tag[], addActiveDa
   function endCreateActiveTag(e: { target: { value: any; }; }) {
     setIsNewTagNameInputFocused(false)
     if (e.target.value) return
-    setIsTagNameMenuVisible(false)
+    // setIsTagNameMenuVisible(false)
     setIsNewTagBtnAnInput(false)
   }
 
@@ -174,12 +201,17 @@ export function ActiveDatum({ tags, addActiveDatum }: { tags: Tag[], addActiveDa
     ])
   }
 
+  function convertToValuelessTag(tag) {
+    setCurrentValuelessTag(tag)
+  }
+
   let rounded = 'rounded'
   if (newTagNameInputValue.length) rounded = 'rounded-tl rounded-bl'
 
+
   return (
     <>
-      <TagNameMenu isVisible={isTagNameMenuVisible} tags={tags} addToActiveTags={addToActiveTags} />
+      <TagMenu isVisible={isTagNameMenuVisible} tags={tags} addToActiveTags={addToActiveTags} convertToValuelessTag={convertToValuelessTag} />
       <div className='active-datum flex relative items-center justify-between w-full h-[50px] pl-[10px]'>
         <div className='flex'>{activeTags.map((tag, i) => <Tag key={i} {...tag} />)}
           {isNewTagBtnAnInput
