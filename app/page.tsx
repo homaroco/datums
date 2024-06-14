@@ -43,7 +43,7 @@ export function Tag({ name, value, unit, color }: Tag) {
   if (unit) roundedValue = ''
   if (!value) padding = 'pr-[8px]'
   return (
-    <span className='inline-flex rounded overflow-hidden h-[30px] font-bold mr-[5px] whitespace-nowrap'>
+    <span className='tag inline-flex rounded overflow-hidden h-[30px] font-bold mr-[5px] whitespace-nowrap'>
       {name && <button className={`inline-flex relative items-center ${padding} pl-[8px]`} style={{ backgroundColor: color, color: getContrastColor(color) }}>{name}</button>}
       {value && <button className={`inline-flex relative items-center px-[6px] border-2 ${roundedValue}`} style={{ color, borderColor: color, background: getContrastColor(color) }}>{value}</button>}
       {unit && <button className='pr-[6px] pl-[4px]' style={{ background: color, color: getContrastColor(color) }}>{unit}</button>}
@@ -88,12 +88,14 @@ function getValuesForTagName(tagName: string, tags: Tag[]) {
   return values
 }
 
-export function TagMenu({ isVisible, tags, convertToValuelessTag }: { isVisible: boolean, tags: Tag[], convertToValuelessTag: (tag: Tag) => void }) {
-  const [activeTagNameTag, setactiveTagNameTag] = useState<Tag | null>(null)
+export function TagNameMenu({ isVisible, tags, convertToValuelessTag }: { isVisible: boolean, tags: Tag[], convertToValuelessTag: (tag: Tag) => void }) {
+  const [activeTagNameTag, setActiveTagNameTag] = useState<Tag | null>(null)
   const uniqueTagNames = tags.filter((tag, i) => tags.findIndex(t => tag.name === t.name) === i)
   const uniqueNameTags = uniqueTagNames.map((tag: Tag, i: number) =>
     <span
-      onClick={(tag) => selectTag(tag)}
+      onClick={() => {
+        selectTag(tag)
+      }}
       key={i}
       className='pb-[5px]'>
       <Tag {...{ name: tag.name, color: tag.color }} />
@@ -101,18 +103,11 @@ export function TagMenu({ isVisible, tags, convertToValuelessTag }: { isVisible:
   )
 
   function selectTag(tag) {
-    setactiveTagNameTag(tag)
+    console.log('selectTag tag:', tag)
+    setActiveTagNameTag(tag)
     convertToValuelessTag(tag)
   }
 
-  const uniqueTagValues = getValuesForTagName(activeTagNameTag?.name, tags)
-  const uniqueValueTags = uniqueTagValues.map((value: string, i: number) =>
-    <span
-      key={i}
-      className='pb-[5px]'>
-      <Tag {...{ value, color: activeTagNameTag.color }} />
-    </span>
-  )
   let height = 'max-h-0 opacity-0'
   let border = 'border-b-0'
   if (isVisible) {
@@ -123,7 +118,42 @@ export function TagMenu({ isVisible, tags, convertToValuelessTag }: { isVisible:
     <div className={`tag-name-menu px-[10px] w-full ${height} overflow-scroll`}>
       <div className={`${border} border-neutral-700`}>
         <div className={`inline-flex flex-wrap justify-start w-auto pt-[10px] pb-[5px]`}>
-          {activeTagNameTag ? uniqueValueTags : uniqueNameTags}
+          {uniqueNameTags}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export function TagValueMenu({ isVisible, nameTag, tags, onClick }: { isVisible: boolean, nameTag: Tag | null, tags: Tag[], onClick: () => void }) {
+  let height = 'max-h-0 opacity-0'
+  let border = 'border-b-0'
+  if (isVisible) {
+    height = 'max-h-[150px] opacity-100'
+    border = 'border-b-[1px]'
+  }
+
+  let uniqueValues: string[] = []
+  tags.forEach(tag => {
+    if (nameTag && tag.value && tag.name === nameTag.name) {
+      if (uniqueValues.indexOf(tag.value) === -1) uniqueValues.push(tag.value)
+    }
+  })
+
+  const uniqueValueTags = uniqueValues.map((value, i) => (
+    <span
+      onClick={() => onClick(value)}
+      key={i}
+      className='pb-[5px]'
+    >
+      <Tag {...{ value, color: nameTag.color }} />
+    </span>
+  ))
+  return (
+    <div className={`tag-value-menu px-[10px] w-full ${height} overflow-scroll`}>
+      <div className={`${border} border-neutral-700`}>
+        <div className={`inline-flex flex-wrap justify-start w-auto pt-[10px] pb-[5px]`}>
+          {uniqueValueTags}
         </div>
       </div>
     </div>
@@ -134,9 +164,9 @@ export function ActiveDatum({ tags, addActiveDatum }: { tags: Tag[], addActiveDa
   const [newTagColor, setNewTagColor] = useState('')
   const [activeTags, setActiveTags] = useState<Tag[]>([])
   const [currentValuelessTag, setCurrentValuelessTag] = useState<Tag | null>(null)
-  const [isNewTagBtnAnInput, setIsNewTagBtnAnInput] = useState(false)
   const [newTagNameInputValue, setNewTagNameInputValue] = useState('')
   const [isTagNameMenuVisible, setIsTagNameMenuVisible] = useState(false)
+  const [isTagValueMenuVisible, setIsTagValueMenuVisible] = useState(false)
   const [isNewTagNameInputFocused, setIsNewTagNameInputFocused] = useState(false)
   const [inputWidth, setInputWidth] = useState(72) // width of 'New tag'
 
@@ -154,19 +184,19 @@ export function ActiveDatum({ tags, addActiveDatum }: { tags: Tag[], addActiveDa
 
 
   function beginCreateActiveTag() {
+    setIsNewTagNameInputFocused(true)
     setIsTagNameMenuVisible(true)
-    setIsNewTagBtnAnInput(true)
   }
 
   function endCreateActiveTag(e: { target: { value: any; }; }) {
     setIsNewTagNameInputFocused(false)
     if (e.target.value) return
-    // setIsTagNameMenuVisible(false)
-    setIsNewTagBtnAnInput(false)
+    if (currentValuelessTag !== null) return
+    setIsTagNameMenuVisible(false)
   }
 
   function createTagName(e: any) {
-    e.preventDefault
+    e.preventDefault()
     const tagName = newTagNameInputValue
     // TODO check if it exists already
     // if not, add to tag name menu
@@ -203,39 +233,89 @@ export function ActiveDatum({ tags, addActiveDatum }: { tags: Tag[], addActiveDa
 
   function convertToValuelessTag(tag) {
     setCurrentValuelessTag(tag)
+    setIsTagNameMenuVisible(false)
+    setIsTagValueMenuVisible(true)
   }
 
-  let rounded = 'rounded'
-  if (newTagNameInputValue.length) rounded = 'rounded-tl rounded-bl'
+  function addValueToActiveTag(value) {
+    setIsTagNameMenuVisible(false)
+    setIsTagValueMenuVisible(false)
+    addToActiveTags({
+      name: currentValuelessTag.name,
+      value,
+      color: currentValuelessTag?.color,
+    })
 
+    setCurrentValuelessTag(null)
+  }
 
   return (
     <>
-      <TagMenu isVisible={isTagNameMenuVisible} tags={tags} addToActiveTags={addToActiveTags} convertToValuelessTag={convertToValuelessTag} />
+      <TagNameMenu isVisible={isTagNameMenuVisible} tags={tags} convertToValuelessTag={convertToValuelessTag} />
+      <TagValueMenu isVisible={isTagValueMenuVisible} nameTag={currentValuelessTag} tags={tags} onClick={addValueToActiveTag} />
       <div className='active-datum flex relative items-center justify-between w-full h-[50px] pl-[10px]'>
         <div className='flex'>{activeTags.map((tag, i) => <Tag key={i} {...tag} />)}
-          {isNewTagBtnAnInput
-            ? <form onSubmit={createTagName} className='flex items-center justify-center'>
-              <input
-                className={`new-tag-input flex items-center border ${rounded} px-[5px] h-[30px] pb-[1px] w-[66px] border-neutral-700 bg-black focus:border-white text-neutral-700 focus:text-white`}
-                autoFocus
-                placeholder='New tag'
-                value={newTagNameInputValue}
-                onBlur={endCreateActiveTag}
-                onFocus={() => setIsNewTagNameInputFocused(true)}
-                onChange={updateTagNameInputValue}
-              // style={{ width: inputWidth > 60 ? inputWidth + 15 + 'px' : '66px' }}
-              ></input>
-              {<span ref={newTagNameDummyRef} className='dummy-tag-name absolute opacity-0 -z-10'>{newTagNameInputValue}</span>}
-              {newTagNameInputValue && <button className={`flex items-center rounded-tr rounded-br justify-center w-[30px] h-[30px] text-lg text-black ${isNewTagNameInputFocused ? 'bg-white' : 'bg-neutral-700'}`} onClick={createTagName}><FaPlus /></button>}
-            </form>
-            : <button
-              className='border rounded border-neutral-700 px-[5px] h-[30px] w-[66px]'
-              onClick={beginCreateActiveTag}
-            >New tag</button>
-          }</div>
+
+          <form onSubmit={createTagName} className='flex items-center justify-center'>
+            {
+              currentValuelessTag
+                ? <DatumBarValueInput
+                  value={newTagNameInputValue}
+                  // onFocus={beginCreateActiveTag}
+                  onBlur={endCreateActiveTag}
+                  onChange={updateTagNameInputValue}
+                  tagNameTag={currentValuelessTag}
+                />
+                : <DatumBarNameInput
+                  value={newTagNameInputValue}
+                  onFocus={beginCreateActiveTag}
+                  onBlur={endCreateActiveTag}
+                  onChange={updateTagNameInputValue}
+                  tagNameTag={currentValuelessTag}
+                />
+            }
+            {newTagNameInputValue && <button className={`flex items-center rounded-tr rounded-br justify-center w-[30px] h-[30px] text-lg text-black ${isNewTagNameInputFocused ? 'bg-white' : 'bg-neutral-700'}`} onClick={createTagName}><FaPlus /></button>}
+          </form>
+        </div>
         {activeTags.length ? <button className='flex items-center justify-center text-3xl w-[50px] h-[50px] text-neutral-500 active:hover:text-white' onClick={submitActiveDatum}><FaPlus /></button> : null}
       </div>
+    </>
+  )
+}
+
+function DatumBarNameInput({ value, onBlur, onFocus, onChange, tagNameTag }: any) {
+  let rounded = value ? 'rounded-tl rounded-bl' : 'rounded'
+  return (
+
+    <input
+      className={`new-tag-input flex items-center border ${rounded} px-[5px] h-[30px] pb-[1px] w-[66px] placeholder-neutral-700 border-neutral-700 bg-black focus:border-white text-neutral-700 focus:text-white focus:placeholder-white`}
+      placeholder={'New tag'}
+      value={value}
+      onBlur={onBlur}
+      onFocus={onFocus}
+      onChange={onChange}
+    ></input>
+  )
+}
+
+function DatumBarValueInput({ value, onBlur, onFocus, onChange, tagNameTag }: any) {
+  const rounded = value ? '' : 'rounded-tr rounded-br'
+  return (
+    <>
+      {tagNameTag && <span className='tag inline-flex rounded-tl rounded-bl overflow-hidden h-[30px] font-bold whitespace-nowrap'>
+        <button className={`inline-flex relative items-center pl-[8px] pr-[6px]`} style={{ backgroundColor: tagNameTag.color, color: getContrastColor(tagNameTag.color) }}>{tagNameTag.name}</button>
+      </span>
+      }
+      <input
+        className={`new-tag-input flex items-center ${rounded} border px-[5px] h-[30px] pb-[1px] w-[66px] bg-black placeholder-neutral-700 focus:text-white`}
+        autoFocus
+        placeholder={tagNameTag ? 'value' : 'New tag'}
+        value={value}
+        onBlur={onBlur}
+        onFocus={onFocus}
+        onChange={onChange}
+        style={{ borderColor: tagNameTag.color }}
+      ></input>
     </>
   )
 }

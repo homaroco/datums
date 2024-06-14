@@ -136,7 +136,8 @@ footer {
 	scrollbar-width: none;
 }
 
-.tag-name-menu {
+.tag-name-menu,
+.tag-value-menu {
 	transition: max-height .2s ease-out, opacity .2s ease-out;
 	/* animation-name: slide-up;
 	animation-duration: 1s; */
