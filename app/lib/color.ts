@@ -12,7 +12,6 @@ export function getRandomHslValues() {
 }
 
 export function getContrastColor(color: string) {
-    console.log(color)
     color = (color.charAt(0) === '#') ? color.substring(1, 7) : color
     const r = parseInt(color.substring(0, 2), 16) // hexToR
     const g = parseInt(color.substring(2, 4), 16) // hexToG

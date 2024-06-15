@@ -1,33 +1,27 @@
 'use client'
-
-import {
-  FaBars,
-  FaPlus
-} from 'react-icons/fa6'
-import { BsThreeDots } from "react-icons/bs";
-import { TbGridDots } from "react-icons/tb";
-import { LuArrowDownUp, LuListFilter } from "react-icons/lu";
+import React, { useEffect, useState } from 'react'
 import { v4 as uuid } from 'uuid'
 
+import { FaBars } from 'react-icons/fa6'
+import { TbGridDots } from "react-icons/tb"
+import { LuArrowDownUp, LuListFilter } from "react-icons/lu"
 
-import { getRandomHex, getContrastColor } from './lib/utils.js'
-import React, { ChangeEvent, RefObject, useEffect, useRef, useState } from 'react';
-import { getTimestamp } from './lib/time';
+import Datum from './components/Datum'
+import StagedDatum from './components/StagedDatum'
 
 import { DatumProps, TagProps } from './types'
-import Datum from './components/Datum'
-
-import StagedDatum from './components/StagedDatum'
-import { json } from 'stream/consumers';
 
 export default function App() {
   const [datums, setDatums] = useState<DatumProps[]>([])
   const [tags, setTags] = useState<TagProps[]>([])
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
+    setIsLoading(true)
     fetch('http://localhost:3000/api/datums')
       .then(res => res.json())
       .then(json => {
+        setIsLoading(false)
         setDatums(json)
         const tags = getUniqueTagsFromDatums(json)
         setTags(tags)
@@ -73,7 +67,6 @@ export default function App() {
 
   return (
     <main className="flex flex-col w-full h-full items-center justify-between font-nunito text-sm text-neutral-700">
-
       <header className='flex relative top-0 w-full justify-between items-center h-[50px] border-b border-neutral-700 text-2xl bg-black z-10'>
         <span className='flex h-full'>
           <button className='flex items-center justify-center p-2 w-[50px]' aria-label='Sort Datums'><LuArrowDownUp /></button>
@@ -85,6 +78,7 @@ export default function App() {
           <button className='flex items-center justify-center p-2 w-[50px]' aria-label='View Menu'><FaBars /></button>
         </span>
       </header>
+      {isLoading && <span className='loader color-neutral-700'></span>}
       <section className='relative w-full h-full overflow-auto'>
         <ul id='datum-list' className='datum-list overflow-auto'>
           {datums.map((datum: any, i: number) => <Datum key={datum.id} {...datum} />)}
@@ -94,5 +88,5 @@ export default function App() {
         <StagedDatum tags={tags} addActiveDatum={addActiveDatum} />
       </footer>
     </main >
-  );
+  )
 }

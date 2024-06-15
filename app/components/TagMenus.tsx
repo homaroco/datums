@@ -29,7 +29,7 @@ export function TagNameMenu({ isVisible, tags, convertToValuelessTag, createName
     border = 'border-b-[1px]'
   }
   return (
-    <div className={`tag-name-menu px-[10px] w-full ${height} overflow-scroll`}>
+    <div className={`tag-name-menu absolute px-[10px] bottom-full w-full ${height} overflow-scroll bg-black border-t-neutral-700`}>
       <div className={`${border} border-neutral-700`}>
         <div className={`inline-flex flex-wrap justify-start w-auto pt-[10px] pb-[5px]`}>
           {uniqueNameTags}
@@ -39,7 +39,7 @@ export function TagNameMenu({ isVisible, tags, convertToValuelessTag, createName
   )
 }
 
-export function TagValueMenu({ isVisible, nameTag, tags, onClick }: { isVisible: boolean, nameTag: TagProps | null, tags: Tag[], onClick: (value: string) => void }) {
+export function TagValueMenu({ isVisible, nameTag, tags, onClick }: { isVisible: boolean, nameTag: TagProps, tags: TagProps[], onClick: (value: string) => void }) {
   let height = 'max-h-0 opacity-0'
   let border = 'border-b-0'
   if (isVisible) {
@@ -64,7 +64,7 @@ export function TagValueMenu({ isVisible, nameTag, tags, onClick }: { isVisible:
     </span>
   ))
   return (
-    <div className={`tag-value-menu px-[10px] w-full ${height} overflow-scroll`}>
+    <div className={`tag-value-menu absolute bottom-full px-[10px] w-full ${height} overflow-scroll bg-black border-t-neutral-700`}>
       <div className={`${border} border-neutral-700`}>
         <div className={`inline-flex flex-wrap justify-start w-auto pt-[10px] pb-[5px]`}>
           {uniqueValueTags}
