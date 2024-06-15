@@ -7,12 +7,13 @@ import { getRandomHex } from '../lib/utils'
 
 import { TagProps } from '../types'
 import { FaPlus } from 'react-icons/fa6'
+import { Tag } from './Tag'
 
-export default function ActiveDatum({ tags, addActiveDatum }: { tags: Tag[], addActiveDatum: (tags: Tag[]) => void }) {
+export default function ActiveDatum({ tags, addActiveDatum }: { tags: TagProps[], addActiveDatum: (tags: Tag[]) => void }) {
   const [newTagColor, setNewTagColor] = useState('')
-  const [activeTags, setActiveTags] = useState<Tag[]>([])
-  const [currentValuelessTag, setCurrentValuelessTag] = useState<Tag | null>(null)
-  const [newTagNameInputValue, setNewTagNameInputValue] = useState('')
+  const [activeTags, setActiveTags] = useState<TagProps[]>([])
+  const [currentValuelessTag, setCurrentValuelessTag] = useState<TagProps | null>(null)
+  const [tagInputValue, setTagInputValue] = useState('')
   const [isTagNameMenuVisible, setIsTagNameMenuVisible] = useState(false)
   const [isTagValueMenuVisible, setIsTagValueMenuVisible] = useState(false)
   const [isNewTagNameInputFocused, setIsNewTagNameInputFocused] = useState(false)
@@ -23,11 +24,11 @@ export default function ActiveDatum({ tags, addActiveDatum }: { tags: Tag[], add
     setNewTagColor(getRandomHex(6))
   }, [activeTags])
 
-  useEffect(() => {
-    if (newTagNameDummyRef.current) {
-      setInputWidth(newTagNameDummyRef.current.offsetWidth || 72)
-    }
-  }, [newTagNameInputValue])
+  // useEffect(() => {
+  //   if (newTagNameDummyRef.current) {
+  //     setInputWidth(newTagNameDummyRef.current.offsetWidth || 72)
+  //   }
+  // }, [tagInputValue])
 
 
   function beginCreateActiveTag() {
@@ -42,24 +43,34 @@ export default function ActiveDatum({ tags, addActiveDatum }: { tags: Tag[], add
     setIsTagNameMenuVisible(false)
   }
 
-  function createTagNameFromInput(e: any) {
+  function addTagToStaged(e: any) {
     e.preventDefault()
-    const tagName = newTagNameInputValue
     // TODO check if it exists already
     // if not, add to tag name menu
-
+    let newTag
+    if (currentValuelessTag) {
+      newTag = {
+        color: currentValuelessTag.color,
+        name: currentValuelessTag.name,
+        value: tagInputValue,
+      }
+      setCurrentValuelessTag(null)
+    } else {
+      newTag = {
+        color: newTagColor,
+        name: tagInputValue,
+      }
+    }
     setActiveTags([
       ...activeTags,
-      {
-        name: tagName,
-        color: newTagColor,
-      }
+      newTag,
     ])
-    setNewTagNameInputValue('')
+    setTagInputValue('')
     endCreateActiveTag(e)
+    if (currentValuelessTag) { }
   }
 
-  function addNameTagToStaging(tag: Tag) {
+  function addNameTagToStaging(tag: TagProps) {
     setActiveTags([
       ...activeTags,
       tag,
@@ -69,9 +80,9 @@ export default function ActiveDatum({ tags, addActiveDatum }: { tags: Tag[], add
 
   function updateTagNameInputValue(e: any) {
     if (e.key === 'Enter') {
-      createTagNameFromInput(e)
+      addTagToStaged(e)
     }
-    else setNewTagNameInputValue(e.target.value)
+    else setTagInputValue(e.target.value)
   }
 
   function submitActiveDatum() {
@@ -86,13 +97,13 @@ export default function ActiveDatum({ tags, addActiveDatum }: { tags: Tag[], add
     ])
   }
 
-  function convertToValuelessTag(tag) {
+  function convertToValuelessTag(tag: TagProps) {
     setCurrentValuelessTag(tag)
     setIsTagNameMenuVisible(false)
     setIsTagValueMenuVisible(true)
   }
 
-  function addValueToActiveTag(value) {
+  function addValueToActiveTag(value: string) {
     setIsTagNameMenuVisible(false)
     setIsTagValueMenuVisible(false)
     addToActiveTags({
@@ -113,25 +124,25 @@ export default function ActiveDatum({ tags, addActiveDatum }: { tags: Tag[], add
           <div className='inline-flex relative grow overflow-auto'>
             <div className='inline-flex relative'>
               {activeTags.map((tag, i) => <Tag key={i} {...tag} />)}
-              <form onSubmit={createTagNameFromInput} className='flex items-center justify-center'>
+              <form onSubmit={addTagToStaged} className='flex items-center justify-center'>
                 {
                   currentValuelessTag
                     ? <DatumBarValueInput
-                      value={newTagNameInputValue}
+                      value={tagInputValue}
                       // onFocus={beginCreateActiveTag}
                       onBlur={endCreateActiveTag}
                       onChange={updateTagNameInputValue}
                       tagNameTag={currentValuelessTag}
                     />
                     : <DatumBarNameInput
-                      value={newTagNameInputValue}
+                      value={tagInputValue}
                       onFocus={beginCreateActiveTag}
                       onBlur={endCreateActiveTag}
                       onChange={updateTagNameInputValue}
                       tagNameTag={currentValuelessTag}
                     />
                 }
-                {newTagNameInputValue && <button className={`flex items-center rounded-tr rounded-br justify-center w-[30px] h-[30px] text-lg text-black ${isNewTagNameInputFocused ? 'bg-white' : 'bg-neutral-700'}`} onClick={createTagNameFromInput}><FaPlus /></button>}
+                {tagInputValue && <button className={`flex items-center rounded-tr rounded-br justify-center w-[30px] h-[30px] text-lg text-black ${isNewTagNameInputFocused ? 'bg-white' : 'bg-neutral-700'}`} onClick={addTagToStaged}><FaPlus /></button>}
               </form>
             </div>
           </div>
