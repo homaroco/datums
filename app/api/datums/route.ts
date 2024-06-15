@@ -135,3 +135,8 @@ export function GET(req: Request) {
 	}
 	return Response.json(initDatums)
 }
+
+export function POST(req: Request) {
+	console.log(req.body)
+	return Response.json({ message: 'new datum added' })
+}

@@ -9,7 +9,7 @@ import { TagProps } from '../types'
 import { FaPlus } from 'react-icons/fa6'
 import { Tag } from './Tag'
 
-export default function ActiveDatum({ tags, addActiveDatum }: { tags: TagProps[], addActiveDatum: (tags: Tag[]) => void }) {
+export default function ActiveDatum({ tags, addActiveDatum }: { tags: TagProps[], addActiveDatum: (tags: TagProps[]) => void }) {
   const [newTagColor, setNewTagColor] = useState('')
   const [activeTags, setActiveTags] = useState<TagProps[]>([])
   const [currentValuelessTag, setCurrentValuelessTag] = useState<TagProps | null>(null)
@@ -41,6 +41,7 @@ export default function ActiveDatum({ tags, addActiveDatum }: { tags: TagProps[]
     if (e.target.value) return
     if (currentValuelessTag !== null) return
     setIsTagNameMenuVisible(false)
+    setIsTagValueMenuVisible(false)
   }
 
   function addTagToStaged(e: any) {
@@ -67,7 +68,6 @@ export default function ActiveDatum({ tags, addActiveDatum }: { tags: TagProps[]
     ])
     setTagInputValue('')
     endCreateActiveTag(e)
-    if (currentValuelessTag) { }
   }
 
   function addNameTagToStaging(tag: TagProps) {
@@ -104,14 +104,14 @@ export default function ActiveDatum({ tags, addActiveDatum }: { tags: TagProps[]
   }
 
   function addValueToActiveTag(value: string) {
+    if (!currentValuelessTag) return
     setIsTagNameMenuVisible(false)
     setIsTagValueMenuVisible(false)
     addToActiveTags({
       name: currentValuelessTag.name,
       value,
-      color: currentValuelessTag?.color,
+      color: currentValuelessTag.color,
     })
-
     setCurrentValuelessTag(null)
   }
 

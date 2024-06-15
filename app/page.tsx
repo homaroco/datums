@@ -18,10 +18,11 @@ import { DatumProps, TagProps } from './types'
 import Datum from './components/Datum'
 
 import StagedDatum from './components/StagedDatum'
+import { json } from 'stream/consumers';
 
 export default function App() {
   const [datums, setDatums] = useState<DatumProps[]>([])
-  const [tags, setTags] = useState<Tag[]>([])
+  const [tags, setTags] = useState<TagProps[]>([])
 
   useEffect(() => {
     fetch('http://localhost:3000/api/datums')
@@ -40,9 +41,14 @@ export default function App() {
     if (!latestDatum) return
     const datumEl = document.getElementById(latestDatum.id)
     if (datumEl) datumEl.scrollIntoView({ behavior: 'smooth' })
+    fetch('http://localhost:3000/api/datums', {
+      method: 'POST',
+      body: JSON.stringify(latestDatum)
+    }).then(res => res.json())
+      .then(data => console.log(data))
   }, [datums])
 
-  function addActiveDatum(tags: Tag[]) {
+  function addActiveDatum(tags: TagProps[]) {
     setDatums([
       ...datums,
       {
@@ -56,9 +62,9 @@ export default function App() {
 
 
   function getUniqueTagsFromDatums(datums: any[]) {
-    let tags: Tag[] = []
+    let tags: TagProps[] = []
     datums.forEach(datum => {
-      datum.tags.forEach((tag: Tag) => {
+      datum.tags.forEach((tag: TagProps) => {
         tags.push(tag)
       })
     })
