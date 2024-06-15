@@ -1,7 +1,7 @@
 import { TagProps } from "../types"
 import { Tag } from "./Tag"
 
-function getUniqueTagNames(tags) {
+function getUniqueTagNames(tags: TagProps[]) {
   const uniqueTagNameObj: any = {}
   for (let { name, value, color } of tags) {
     if (!name) continue
