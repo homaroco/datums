@@ -1,9 +1,23 @@
 import { TagProps } from "../types"
 import { Tag } from "./Tag"
 
+function getUniqueTagNames(tags) {
+  const uniqueTagNameObj: any = {}
+  for (let { name, value, color } of tags) {
+    if (!name) continue
+    uniqueTagNameObj[name] = {
+      name,
+      value,
+      color,
+      count: uniqueTagNameObj[name] ? uniqueTagNameObj[name].count + 1 : 1
+    }
+  }
+  const uniqueTagNameCounts = Object.values(uniqueTagNameObj)
+  return uniqueTagNameCounts.sort((a: any, b: any) => b.count - a.count)
+}
+
 export function TagNameMenu({ isVisible, tags, convertToValuelessTag, createNameTagFromButton }: { isVisible: boolean, tags: TagProps[], convertToValuelessTag: (tag: TagProps) => void, createNameTagFromButton: (tag: TagProps) => void }) {
-  const uniqueTagNames = tags.filter((tag, i) => tags.findIndex(t => tag.name === t.name) === i)
-  const uniqueNameTags = uniqueTagNames.map((tag: TagProps, i: number) =>
+  const uniqueNameTags = getUniqueTagNames(tags).map((tag: any, i: number) =>
     <span
       onClick={() => {
         selectTag(tag)
@@ -23,11 +37,12 @@ export function TagNameMenu({ isVisible, tags, convertToValuelessTag, createName
   }
 
   let height = 'max-h-0 opacity-0'
-  let border = 'border-b-0'
+  let border = 'border-b-[1px]'
   if (isVisible) {
     height = 'max-h-[150px] opacity-100'
     border = 'border-b-[1px]'
   }
+
   return (
     <div className={`tag-name-menu absolute px-[10px] bottom-full w-full ${height} overflow-scroll bg-black border-t-neutral-700`}>
       <div className={`${border} border-neutral-700`}>
@@ -39,7 +54,23 @@ export function TagNameMenu({ isVisible, tags, convertToValuelessTag, createName
   )
 }
 
+function getUniqueTagValues(tags: TagProps[], tagName: string) {
+  const uniqueTagNameObj: any = {}
+  for (let { name, value, color } of tags) {
+    if (!name) continue
+    if (name !== tagName) continue
+    uniqueTagNameObj[name] = {
+      value,
+      color,
+      count: uniqueTagNameObj[name] ? uniqueTagNameObj[name].count + 1 : 1
+    }
+  }
+  const uniqueTagNameCounts = Object.values(uniqueTagNameObj)
+  return uniqueTagNameCounts.sort((a: any, b: any) => b.count - a.count)
+}
+
 export function TagValueMenu({ isVisible, nameTag, tags, onClick }: { isVisible: boolean, nameTag: TagProps, tags: TagProps[], onClick: (value: string) => void }) {
+  console.log(getUniqueTagValues(tags, nameTag.name))
   let height = 'max-h-0 opacity-0'
   let border = 'border-b-0'
   if (isVisible) {

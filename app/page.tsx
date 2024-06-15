@@ -53,7 +53,9 @@ export default function App() {
     ])
   }
 
-
+  function deleteDatum(id: string) {
+    setDatums(datums.filter(d => d.id !== id))
+  }
 
   function getUniqueTagsFromDatums(datums: any[]) {
     let tags: TagProps[] = []
@@ -81,7 +83,7 @@ export default function App() {
       {isLoading && <span className='loader color-neutral-700'></span>}
       <section className='relative w-full h-full overflow-auto'>
         <ul id='datum-list' className='datum-list overflow-auto'>
-          {datums.map((datum: any, i: number) => <Datum key={datum.id} {...datum} />)}
+          {datums.map((datum: any, i: number) => <Datum key={datum.id} {...datum} deleteDatum={() => deleteDatum(datum.id)} />)}
         </ul>
       </section>
       <footer className='flex flex-col relative items-center justify-between bottom-0 h-auto w-full border-t border-neutral-700 bg-black'>
