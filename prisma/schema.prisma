@@ -12,8 +12,8 @@ model Datum {
   uuid       String    @unique @db.Uuid
   createdAt  DateTime  @default(now()) @db.Timestamp(6)
   modifiedAt DateTime? @db.Timestamp(6)
-  userId     Int
-  user       User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  userId     String
+  User       User      @relation(fields: [userId], references: [id])
 }
 
 model Tag {
@@ -26,9 +26,9 @@ model Tag {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  name  String? @db.VarChar(255)
-  email String  @unique @db.VarChar(255)
+  id     Int     @id @default(autoincrement())
+  name   String? @db.VarChar(255)
+  email  String  @unique @db.VarChar(255)
   datums Datum[]
   tags   Tag[]
 }

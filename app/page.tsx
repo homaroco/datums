@@ -15,6 +15,7 @@ export default function App() {
   const [datums, setDatums] = useState<DatumProps[]>([])
   const [tags, setTags] = useState<TagProps[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   useEffect(() => {
     setIsLoading(true)
@@ -89,6 +90,16 @@ export default function App() {
       <footer className='flex flex-col relative items-center justify-between bottom-0 h-auto w-full border-t border-neutral-700 bg-black'>
         <StagedDatum tags={tags} addActiveDatum={addActiveDatum} />
       </footer>
+      {!isLoggedIn && <section className='flex fixed justify-center items-center pt-[5px] top-0 w-full h-full z-30 overflow-auto bg-black'>
+        <span className='fixed top-[5px] rainbow text-3xl font-bold select-none'>Datums</span>
+
+        <form className=''>
+          <input className={`border border-neutral-700 bg-black py-[5px] px-[20px] rounded mb-[5px] m-auto`} placeholder='Username'></input>
+          <input className={`border border-neutral-700 bg-black py-[5px] px-[20px] rounded mb-[5px] m-auto`} placeholder='Email'></input>
+          <input className={`border border-neutral-700 bg-black py-[5px] px-[20px] rounded mb-[5px] m-auto`} placeholder='Password'></input>
+        </form>
+      </section>}
+
     </main >
   )
 }

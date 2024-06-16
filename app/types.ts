@@ -8,5 +8,5 @@ export interface TagProps {
 export interface DatumProps {
   id: string,
   createdAt: number,
-  tags: Tag[],
+  tags: TagProps[],
 }

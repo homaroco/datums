@@ -124,10 +124,20 @@ const MAX_TAGS = 6
 
 export async function GET(req: Request) {
 	const datums = await prisma.datum.findMany()
-	return Response.json(initDatums)
+	return Response.json(datums)
 }
 
-export function POST(req: Request) {
-	console.log(req.body)
-	return Response.json({ message: 'new datum added' })
+export async function POST(req: Request) {
+	try {
+		const datum = await req.json()
+		await prisma.datum.create({
+			data: {
+				uuid: uuid(),
+				userId: 'testUserId',
+			}
+		})
+		return Response.json({ message: 'new datum added' })
+	} catch (e) {
+		return Response.json({ error: e })
+	}
 }

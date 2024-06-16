@@ -1,5 +1,4 @@
-const operations = window.crypto.subtle || window.crypto.webkitSubtle
-
+let operations = window.crypto.subtle
 if (!operations) {
   alert('Web crypto is not supported on this browser')
   console.warn('Web crypto API not supported')

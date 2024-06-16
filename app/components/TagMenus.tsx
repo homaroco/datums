@@ -70,7 +70,6 @@ function getUniqueTagValues(tags: TagProps[], tagName: string) {
 }
 
 export function TagValueMenu({ isVisible, nameTag, tags, onClick }: { isVisible: boolean, nameTag: TagProps, tags: TagProps[], onClick: (value: string) => void }) {
-  console.log(getUniqueTagValues(tags, nameTag.name))
   let height = 'max-h-0 opacity-0'
   let border = 'border-b-0'
   if (isVisible) {
