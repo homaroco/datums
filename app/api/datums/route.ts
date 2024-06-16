@@ -133,7 +133,6 @@ export async function POST(req: Request) {
 		await prisma.datum.create({
 			data: {
 				uuid: uuid(),
-				userId: 'testUserId',
 			}
 		})
 		return Response.json({ message: 'new datum added' })

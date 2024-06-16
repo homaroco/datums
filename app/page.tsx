@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { v4 as uuid } from 'uuid'
 
 import { FaBars } from 'react-icons/fa6'
@@ -10,12 +10,18 @@ import Datum from './components/Datum'
 import StagedDatum from './components/StagedDatum'
 
 import { DatumProps, TagProps } from './types'
+import { encrypt, decrypt } from './lib/crypto'
 
 export default function App() {
   const [datums, setDatums] = useState<DatumProps[]>([])
   const [tags, setTags] = useState<TagProps[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [userName, setUserName] = useState('')
+  const [userEmail, setUserEmail] = useState('')
+  const [userPassword, setUserPassword] = useState('')
+
+  const loginPageRef = useRef(null)
 
   useEffect(() => {
     setIsLoading(true)
@@ -68,6 +74,43 @@ export default function App() {
     return tags
   }
 
+  // useEffect(() => {
+  //   encrypt(userName).then(encryptedName => {
+  //     const decoder = new TextDecoder()
+  //     const codedName = decoder.decode(encryptedName.encryptedData)
+  //     const key = encryptedName.key
+  //     localStorage.setItem(codedName, key)
+  //   })
+  // }, [])
+
+  async function login(e) {
+    e.preventDefault()
+    loginPageRef.current.style.opacity = 0
+    setTimeout(() => {
+      setIsLoggedIn(true)
+    }, 1000)
+    const encryptedName = await encrypt(userName)
+    const encryptedEmail = await encrypt(userEmail)
+    const encryptedPass = await encrypt(userPassword)
+
+    const decoder = new TextDecoder()
+    const enc = new TextEncoder()
+    const codedName = decoder.decode(encryptedName.encryptedData)
+    const encodedAgainName = enc.encode(codedName)
+    console.log(encryptedName.encryptedData, encodedAgainName)
+    // const decryptedName = await decrypt(encodedAgainName, encryptedName.key)
+    // console.log(decryptedName)
+    // const codedEmail = decoder.decode(encryptedEmail.encryptedData)
+    // fetch('http://localhost:3000/api/login', {
+    //   method: 'POST',
+    //   body: JSON.stringify({
+    //     name: codedName,
+    //     email: codedEmail,
+    //   })
+    // })
+    return () => node.style.opacity = 1;
+  }
+
   return (
     <main className="flex flex-col w-full h-full items-center justify-between font-nunito text-sm text-neutral-700">
       <header className='flex relative top-0 w-full justify-between items-center h-[50px] border-b border-neutral-700 text-2xl bg-black z-10'>
@@ -90,13 +133,14 @@ export default function App() {
       <footer className='flex flex-col relative items-center justify-between bottom-0 h-auto w-full border-t border-neutral-700 bg-black'>
         <StagedDatum tags={tags} addActiveDatum={addActiveDatum} />
       </footer>
-      {!isLoggedIn && <section className='flex fixed justify-center items-center pt-[5px] top-0 w-full h-full z-30 overflow-auto bg-black'>
+      {!isLoggedIn && <section ref={loginPageRef} className='login-page flex fixed justify-center items-center pt-[5px] top-0 w-full h-full z-30 overflow-auto bg-black'>
         <span className='fixed top-[5px] rainbow text-3xl font-bold select-none'>Datums</span>
 
-        <form className=''>
-          <input className={`border border-neutral-700 bg-black py-[5px] px-[20px] rounded mb-[5px] m-auto`} placeholder='Username'></input>
-          <input className={`border border-neutral-700 bg-black py-[5px] px-[20px] rounded mb-[5px] m-auto`} placeholder='Email'></input>
-          <input className={`border border-neutral-700 bg-black py-[5px] px-[20px] rounded mb-[5px] m-auto`} placeholder='Password'></input>
+        <form onSubmit={login} className='flex flex-col'>
+          <input value={userName} className={`border border-neutral-700 bg-black p-[5px] mx-[20px] rounded mb-[5px] m-auto text-white`} placeholder='Username' onChange={e => setUserName(e.target.value)} ></input>
+          <input value={userEmail} className={`border border-neutral-700 bg-black p-[5px] mx-[20px] rounded mb-[5px] m-auto text-white`} placeholder='Email' onChange={e => setUserEmail(e.target.value)}></input>
+          <input value={userPassword} className={`border border-neutral-700 bg-black p-[5px] mx-[20px] rounded mb-[5px] m-auto text-white`} placeholder='Password' onChange={e => setUserPassword(e.target.value)}></input>
+          {userName && userEmail && userPassword && <button className={`absolute top-[400px] rainbow border border-white rounded mx-[20px] w-[175px] m-auto p-[5px] font-bold`} onClick={login}>Get Datums</button>}
         </form>
       </section>}
 
