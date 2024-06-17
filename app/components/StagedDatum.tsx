@@ -105,7 +105,7 @@ export default function ActiveDatum({ tags, addActiveDatum }: { tags: TagProps[]
   }
 
   return (
-    <>
+    <footer className='flex flex-col relative items-center justify-between bottom-0 h-auto w-full border-t border-neutral-700 bg-black'>
       <TagNameMenu isVisible={isMenuVisible === 'name'} tags={tags} convertToValuelessTag={convertToValuelessTag} createNameTagFromButton={addNameTagToStaging} />
       {activeTag && <TagValueMenu isVisible={isMenuVisible === 'value'} nameTag={activeTag} tags={tags} onClick={addValueToActiveTag} />}
       <div className='active-datum flex relative items-center justify-between w-full h-[50px] pl-[10px]'>
@@ -138,6 +138,6 @@ export default function ActiveDatum({ tags, addActiveDatum }: { tags: TagProps[]
         </div>
         {stagedTags.length ? <button className='flex items-center justify-center text-3xl w-[50px] h-[50px] text-neutral-500 active:hover:text-white' onClick={submitActiveDatum}><FaPlus /></button> : null}
       </div>
-    </>
+    </footer>
   )
 }

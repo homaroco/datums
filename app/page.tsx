@@ -12,10 +12,13 @@ import StagedDatum from './components/StagedDatum'
 import { DatumProps, TagProps } from './types'
 import { encrypt, decrypt } from './lib/crypto.js'
 import { decode } from 'punycode'
+import Header from './components/Header'
+import DatumList from './components/DatumList'
+import LoginPage from './components/LoginPage'
 
 export default function App() {
   const [datums, setDatums] = useState<any[]>([])
-  const [tags, setTags] = useState<TagProps[]>([])
+  const [tags, setTags] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [userId, setUserId] = useState('')
@@ -62,7 +65,7 @@ export default function App() {
     const tags = await fetch('http://localhost:3000/api/tags').then(res => res.json())
     let decryptedTags = []
     for (const tag of tags) {
-      const decryptedTag = await decryptTag(tag, userPassword)
+      const decryptedTag = await decryptTag(tag)
       decryptedTags.push(decryptedTag)
     }
     return decryptedTags
@@ -75,14 +78,14 @@ export default function App() {
     let decryptedDatums: any = []
     let decryptedDatum: any
     for (const [i, datum] of datums.entries()) {
-      decryptedDatum = await decryptDatum(datum, userPassword)
+      decryptedDatum = await decryptDatum(datum)
       decryptedDatums.push(decryptedDatum)
 
     }
     return decryptedDatums
   }
 
-  async function decryptTag(tag) {
+  async function decryptTag(tag: any) {
     const datumUuid = await decrypt(tag.datumUuid, userPassword)
     const name = await decrypt(tag.name, userPassword)
     const color = await decrypt(tag.color, userPassword)
@@ -97,7 +100,7 @@ export default function App() {
     }
   }
 
-  async function decryptDatum(datum) {
+  async function decryptDatum(datum: any) {
     const uuid = await decrypt(datum.uuid, userPassword)
     const createdAt = await decrypt(datum.createdAt, userPassword)
     return {
@@ -106,8 +109,8 @@ export default function App() {
     }
   }
 
-  function assignTagsToDatums(datums, tags) {
-    let datumsWithTags = []
+  function assignTagsToDatums(datums: any, tags: any) {
+    let datumsWithTags: any[] = []
     datums.forEach((datum: any) => {
       datum.tags = []
       tags.forEach(async (tag: any) => {
@@ -157,7 +160,7 @@ export default function App() {
     const encryptedTags = await Promise.all(tags.map(async tag => {
       return {
         datumUuid: await encrypt(uuid, userPassword),
-        name: await encrypt(tag.name, userPassword),
+        name: tag.name ? await encrypt(tag.name, userPassword) : null,
         color: await encrypt(tag.color, userPassword),
         value: tag.value ? await encrypt(tag.value, userPassword) : null,
         unit: tag.unit ? await encrypt(tag.unit, userPassword) : null,
@@ -185,14 +188,14 @@ export default function App() {
   }
 
   function fadeOutLoginPage() {
-    loginPageRef.current.style.opacity = 0
+    if (loginPageRef.current) loginPageRef.current.style.opacity = 0
     setTimeout(() => {
       setIsLoggedIn(true)
     }, 1000)
     // return () => loginPageRef.current.style.opacity = 1
   }
 
-  async function login(e) {
+  async function login(e: any) {
     e.preventDefault()
     fadeOutLoginPage()
     const userId = await encrypt(userEmail, userPassword)
@@ -203,36 +206,11 @@ export default function App() {
 
   return (
     <main className="flex flex-col w-full h-full items-center justify-between font-nunito text-sm text-neutral-700">
-      <header className='flex relative top-0 w-full justify-between items-center h-[50px] border-b border-neutral-700 text-2xl bg-black z-10'>
-        <span className='flex h-full'>
-          <button className='flex items-center justify-center p-2 w-[50px]' aria-label='Sort Datums'><LuArrowDownUp /></button>
-          <button className='flex items-center justify-center p-2 w-[50px] text-3xl' aria-label='Filter Datums'><LuListFilter /></button>
-        </span>
-        <span className='rainbow text-3xl font-bold select-none'>Datums</span>
-        <span className='flex h-full'>
-          <button className='flex items-center justify-center p-2 w-[50px]' aria-label='View Apps'><TbGridDots /></button>
-          <button className='flex items-center justify-center p-2 w-[50px]' aria-label='View Menu'><FaBars /></button>
-        </span>
-      </header>
+      <Header />
       {isLoading && <span className='loader color-neutral-700'></span>}
-      <section className='relative w-full h-full overflow-auto'>
-        <ul id='datum-list' className='datum-list overflow-auto'>
-          {datums.map((datum: any, i: number) => <Datum key={datum.uuid} {...datum} deleteDatum={() => deleteDatum(datum.uuid)} />)}
-        </ul>
-      </section>
-      <footer className='flex flex-col relative items-center justify-between bottom-0 h-auto w-full border-t border-neutral-700 bg-black'>
-        <StagedDatum tags={tags} addActiveDatum={addActiveDatum} />
-      </footer>
-      {!isLoggedIn && <section ref={loginPageRef} className='login-page flex fixed justify-center items-center pt-[5px] top-0 w-full h-full z-30 overflow-auto bg-black'>
-        <span className='fixed top-[5px] rainbow text-3xl font-bold select-none'>Datums</span>
-
-        <form onSubmit={login} className='flex flex-col'>
-          <input value={userEmail} className={`border border-neutral-700 bg-black p-[5px] mx-[20px] rounded mb-[5px] m-auto text-white`} placeholder='Email' onChange={e => setUserEmail(e.target.value)}></input>
-          <input value={userPassword} className={`border border-neutral-700 bg-black p-[5px] mx-[20px] rounded mb-[5px] m-auto text-white`} placeholder='Password' onChange={e => setUserPassword(e.target.value)}></input>
-          {userEmail && userPassword && <button className={`absolute top-[375px] rainbow border border-white rounded mx-[20px] w-[175px] m-auto p-[5px] font-bold`} onClick={login}>Get Datums</button>}
-        </form>
-      </section>}
-
+      <DatumList datums={datums} />
+      <StagedDatum tags={tags} addActiveDatum={addActiveDatum} />
+      {!isLoggedIn && <LoginPage loginPageRef={loginPageRef} login={login} userEmail={userEmail} userPassword={userPassword} />}
     </main >
   )
 }
