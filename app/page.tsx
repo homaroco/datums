@@ -13,8 +13,13 @@ import { DatumProps, TagProps } from './types'
 import { encrypt, decrypt } from './lib/crypto.js'
 import { decode } from 'punycode'
 import Header from './components/Header'
+const LazyHeader = dynamic(() => import('./components/Header'), {
+  ssr: false,
+  loading: () => <span></span>
+})
 import DatumList from './components/DatumList'
 import LoginPage from './components/LoginPage'
+import dynamic from 'next/dynamic'
 
 export default function App() {
   const [datums, setDatums] = useState<any[]>([])
@@ -25,7 +30,7 @@ export default function App() {
   const [userEmail, setUserEmail] = useState('')
   const [userPassword, setUserPassword] = useState('')
 
-  const loginPageRef = useRef(null)
+  const loginPageRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     setIsLoading(true)
@@ -63,6 +68,7 @@ export default function App() {
   async function fetchTags() {
     console.log('Fetching tags...')
     const tags = await fetch('http://localhost:3000/api/tags').then(res => res.json())
+    console.log('Fetched tags!')
     let decryptedTags = []
     for (const tag of tags) {
       const decryptedTag = await decryptTag(tag)
@@ -120,7 +126,6 @@ export default function App() {
       })
       datumsWithTags.push(datum)
     })
-    console.log(datumsWithTags)
     return datumsWithTags
   }
 
@@ -166,7 +171,6 @@ export default function App() {
         unit: tag.unit ? await encrypt(tag.unit, userPassword) : null,
       }
     }))
-    console.log(encryptedTags)
     await fetch('http://localhost:3000/api/tags', {
       method: 'POST',
       body: JSON.stringify(encryptedTags)
@@ -188,7 +192,7 @@ export default function App() {
   }
 
   function fadeOutLoginPage() {
-    if (loginPageRef.current) loginPageRef.current.style.opacity = 0
+    if (loginPageRef.current) loginPageRef.current.style.opacity = '0'
     setTimeout(() => {
       setIsLoggedIn(true)
     }, 1000)
@@ -206,11 +210,11 @@ export default function App() {
 
   return (
     <main className="flex flex-col w-full h-full items-center justify-between font-nunito text-sm text-neutral-700">
-      <Header />
+      <LazyHeader />
       {isLoading && <span className='loader color-neutral-700'></span>}
-      <DatumList datums={datums} />
+      <DatumList datums={datums} deleteDatum={deleteDatum} />
       <StagedDatum tags={tags} addActiveDatum={addActiveDatum} />
-      {!isLoggedIn && <LoginPage loginPageRef={loginPageRef} login={login} userEmail={userEmail} userPassword={userPassword} />}
+      {!isLoggedIn && <LoginPage loginPageRef={loginPageRef} login={login} userEmail={userEmail} userPassword={userPassword} setUserEmail={setUserEmail} setUserPassword={setUserPassword} />}
     </main >
   )
 }

@@ -1,4 +1,6 @@
-export default function DatumList({ datums }: any) {
+import Datum from "./Datum";
+
+export default function DatumList({ datums, deleteDatum }: any) {
   return (
     <section className='relative w-full h-full overflow-auto'>
       <ul id='datum-list' className='datum-list overflow-auto'>

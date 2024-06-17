@@ -12,13 +12,13 @@ export default function Datum(
       <span className='container inline-flex relative overflow-auto'>
         <span className='datum-tag-sub-container inline-flex relative grow justify-start overflow-auto'>
           <span className='content inline-flex relative'>
-            {/* {tags.map((tag, i) => <Tag key={i} {...tag} />)} */}
+            {tags.map((tag, i) => <Tag key={i} {...tag} />)}
           </span>
         </span>
         <span className='tag-fade absolute right-0 w-[30px] h-[30px]'></span>
       </span>
       <span className='flex'>
-        <span className='flex items-center text-xs ml-[10px] text-neutral-600'>{getTimestamp(createdAt)}</span>
+        <span className='flex items-center text-xs ml-[10px] text-neutral-600'>{getTimestamp(Number(createdAt))}</span>
         <button className='flex items-center justify-center text-2xl ml-[10px]' onClick={() => setIsMenuOpen(!isMenuOpen)}><BsThreeDots /></button>
       </span>
       {isMenuOpen && <div className='fixed top-0 left-0 right-0 bottom-0 z-20' onClick={() => setIsMenuOpen(false)}></div>}

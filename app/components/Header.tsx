@@ -15,6 +15,5 @@ export default function Header() {
         <button className='flex items-center justify-center p-2 w-[50px]' aria-label='View Menu'><FaBars /></button>
       </span>
     </header>
-
   )
 }

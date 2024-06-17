@@ -13,14 +13,12 @@ function color() {
 
 export async function GET(req: Request) {
 	const tags = await prisma.tag.findMany()
-	console.log(tags)
 	return Response.json(tags)
 }
 
 export async function POST(req: Request) {
 	try {
 		const tags = await req.json()
-		console.log(tags)
 		await prisma.tag.createMany({
 			data: tags
 		})

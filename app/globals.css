@@ -33,6 +33,10 @@ input::placeholder {
 	text-align: center;
 }
 
+input:focus {
+	outline: none;
+}
+
 /* or, for legacy browsers */
 
 ::-webkit-input-placeholder {
