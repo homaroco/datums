@@ -12,19 +12,19 @@ function color() {
 }
 
 export async function GET(req: Request) {
-	const datums = await prisma.datum.findMany()
-	// console.log(datums)
-	return Response.json(datums)
+	const tags = await prisma.tag.findMany()
+	console.log(tags)
+	return Response.json(tags)
 }
 
 export async function POST(req: Request) {
 	try {
-		const datum = await req.json()
-		// console.log(datum)
-		await prisma.datum.create({
-			data: datum
+		const tags = await req.json()
+		console.log(tags)
+		await prisma.tag.createMany({
+			data: tags
 		})
-		return Response.json({ message: 'new datum added' })
+		return Response.json({ message: 'new tags added' })
 	} catch (e) {
 		return Response.json({ error: e })
 	}

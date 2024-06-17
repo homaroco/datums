@@ -5,8 +5,23 @@ export interface TagProps {
   unit?: string,
 }
 
+export interface TagRow {
+  datumUuid: string,
+  color: string,
+  name: string,
+  value: string | null,
+  unit: string | null,
+}
+
+export interface ITag {
+  color: string,
+  name: string,
+  value?: string,
+  unit?: string,
+}
+
 export interface DatumProps {
-  id: string,
+  uuid: string,
   createdAt: number,
   tags: TagProps[],
 }

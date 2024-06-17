@@ -8,27 +8,18 @@ datasource db {
 }
 
 model Datum {
-  id         Int       @id @default(autoincrement())
-  uuid       String    @unique @db.Uuid
-  createdAt  DateTime  @default(now()) @db.Timestamp(6)
-  modifiedAt DateTime? @db.Timestamp(6)
-  userId     String
-  User       User      @relation(fields: [userId], references: [id])
+  id         Int     @id @default(autoincrement())
+  uuid       String  @unique @db.VarChar(256)
+  createdAt  String  @db.VarChar(256)
+  modifiedAt String? @db.VarChar(256)
+  userId     String? @db.VarChar(256)
 }
 
 model Tag {
-  id     Int     @id @default(autoincrement())
-  userId Int
-  name   String  @db.VarChar(255)
-  value  String? @db.VarChar(255)
-  unit   String? @db.VarChar(255)
-  user   User    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model User {
-  id     Int     @id @default(autoincrement())
-  name   String? @db.VarChar(255)
-  email  String  @unique @db.VarChar(255)
-  datums Datum[]
-  tags   Tag[]
+  id        Int     @id @default(autoincrement())
+  datumUuid String  @db.VarChar(256)
+  name      String  @db.VarChar(255)
+  value     String? @db.VarChar(255)
+  unit      String? @db.VarChar(255)
+  color     String  @db.VarChar(64)
 }

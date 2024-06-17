@@ -12,7 +12,7 @@ export default function Datum(
       <span className='container inline-flex relative overflow-auto'>
         <span className='datum-tag-sub-container inline-flex relative grow justify-start overflow-auto'>
           <span className='content inline-flex relative'>
-            {tags.map((tag, i) => <Tag key={i} {...tag} />)}
+            {/* {tags.map((tag, i) => <Tag key={i} {...tag} />)} */}
           </span>
         </span>
         <span className='tag-fade absolute right-0 w-[30px] h-[30px]'></span>
