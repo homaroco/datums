@@ -13,13 +13,10 @@ import { DatumProps, TagProps } from './types'
 import { encrypt, decrypt } from './lib/crypto.js'
 import { decode } from 'punycode'
 import Header from './components/Header'
-const LazyHeader = dynamic(() => import('./components/Header'), {
-  ssr: false,
-  loading: () => <span></span>
-})
 import DatumList from './components/DatumList'
 import LoginPage from './components/LoginPage'
 import dynamic from 'next/dynamic'
+import AppMenu from './components/AppMenu'
 
 export default function App() {
   const [datums, setDatums] = useState<any[]>([])
@@ -29,34 +26,15 @@ export default function App() {
   const [userId, setUserId] = useState('')
   const [userEmail, setUserEmail] = useState('')
   const [userPassword, setUserPassword] = useState('')
+  const [isAppMenuOpen, setIsAppMenuOpen] = useState(false)
 
   const loginPageRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     setIsLoading(true)
     async function fetchDatumsAndTags() {
-
-      // const [datumsRes, tagsRes] = await Promise.all([
-      //   fetch('http://localhost:3000/api/datums')
-      //     .then(res => res.json()),
-      //   fetch('http://localhost:3000/api/tags')
-      //     .then(res => res.json())
-      // ])
       const datums = await fetchDatums()
       const tags = await fetchTags()
-      // let decryptedTags = []
-      // await Promise.all([tagsRes.forEach(async tag => {
-      //   const decryptedTag = await decryptTag(tag, userPassword)
-      //   decryptedTags.push(decryptedTag)
-      // })])
-      // let decryptedDatums = await Promise.all(datumsRes.map(async datum => {
-      //   const decryptedDatum = await decryptDatum(datum, userPassword)
-      //   return decryptedDatum
-      //   decryptedDatums.push(decryptedDatum)
-      //   console.log(decryptedDatums)
-      // }))
-      // const decryptedDatums = await Promise.all(datumsRes.map(async datum => await decryptDatum(datum)))
-      // const decryptedTags = await Promise.all(tagsRes.map(async tag => await decryptTag(tag)))
       const datumsWithTags = assignTagsToDatums(datums, tags)
       setDatums(datumsWithTags)
       setTags(tags)
@@ -67,7 +45,16 @@ export default function App() {
 
   async function fetchTags() {
     console.log('Fetching tags...')
-    const tags = await fetch('http://localhost:3000/api/tags').then(res => res.json())
+    const form = []
+    const encodedUserId = encodeURIComponent(userId)
+    form.push(encodedUserId)
+    const tags = await fetch(`http://localhost:3000/api/tags`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({ userId })
+    }).then(res => res.json())
     console.log('Fetched tags!')
     let decryptedTags = []
     for (const tag of tags) {
@@ -79,7 +66,7 @@ export default function App() {
 
   async function fetchDatums() {
     console.log('Fetching datums...')
-    const datums = await fetch('http://localhost:3000/api/datums').then(res => res.json())
+    const datums = await fetch(`http://localhost:3000/api/datums?userId=${userId}`).then(res => res.json())
     console.log('Fetched datums!')
     let decryptedDatums: any = []
     let decryptedDatum: any
@@ -144,6 +131,22 @@ export default function App() {
     scrollToLatestDatum()
   }, [datums])
 
+  useEffect(() => {
+    async function login() {
+      const userEmail = localStorage.getItem('userEmail')
+      const userPassword = localStorage.getItem('userPassword')
+      if (userEmail && userPassword) {
+        const userId = await encrypt(userEmail, userPassword)
+        const test1 = await encrypt('test', 'cool')
+        const test2 = await encrypt('test', 'cool')
+        console.log(userId, test1, test2)
+        setUserId(userId)
+        setIsLoggedIn(true)
+      }
+    }
+    login()
+  }, [])
+
   async function addActiveDatum(tags: TagProps[]) {
     const uuid: string = v4()
     const createdAt: string = Date.now().toString()
@@ -203,14 +206,33 @@ export default function App() {
     e.preventDefault()
     fadeOutLoginPage()
     const userId = await encrypt(userEmail, userPassword)
+    console.log(userId)
     setUserId(userId)
     // userKey = await encrypt(userPassword, userPassword)
-    // localStorage.setItem(userKey, userId)
+    localStorage.setItem('userId', userId)
+  }
+
+  function openMenu() {
+    setIsAppMenuOpen(true)
+  }
+
+  function closeMenu() {
+    setIsAppMenuOpen(false)
+  }
+
+  function logout() {
+    closeMenu()
+    localStorage.clear()
+    setUserEmail('')
+    setUserPassword('')
+    setUserId('')
+    setIsLoggedIn(false)
   }
 
   return (
     <main className="flex flex-col w-full h-full items-center justify-between font-nunito text-sm text-neutral-700">
-      <LazyHeader />
+      <AppMenu isOpen={isAppMenuOpen} closeMenu={closeMenu} logout={logout} />
+      <Header openMenu={openMenu} />
       {isLoading && <span className='loader color-neutral-700'></span>}
       <DatumList datums={datums} deleteDatum={deleteDatum} />
       <StagedDatum tags={tags} addActiveDatum={addActiveDatum} />

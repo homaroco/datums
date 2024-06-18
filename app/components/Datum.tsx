@@ -21,7 +21,7 @@ export default function Datum(
         <span className='flex items-center text-xs ml-[10px] text-neutral-600'>{getTimestamp(Number(createdAt))}</span>
         <button className='flex items-center justify-center text-2xl ml-[10px]' onClick={() => setIsMenuOpen(!isMenuOpen)}><BsThreeDots /></button>
       </span>
-      {isMenuOpen && <div className='fixed top-0 left-0 right-0 bottom-0 z-20' onClick={() => setIsMenuOpen(false)}></div>}
+      {isMenuOpen && <div className='click-away-listener fixed top-0 left-0 right-0 bottom-0 z-20' onClick={() => setIsMenuOpen(false)}></div>}
       {isMenuOpen && <div className='datum-menu flex absolute flex-col items-center justify-center px-[10px] bg-black right-[25px] bottom-[25px] border border-white rounded text-[16px] text-white z-30'>
         <span className='py-[10px] w-full text-center border-b border-white'>Edit</span>
         <span className='py-[10px] w-full text-center' onClick={() => deleteDatum(id)}>Delete</span>
