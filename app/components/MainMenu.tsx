@@ -1,4 +1,4 @@
-export default function AppMenu({
+export default function MainMenu({
   isOpen,
   closeMenu,
   logout,
@@ -12,7 +12,7 @@ export default function AppMenu({
   return (
     <>
       <ul
-        className={`app-menu flex flex-col fixed z-30 bottom-0 top-0 right-[-1px] ${width} bg-black border-l border-white text-l font-bold`}
+        className={`main-menu flex flex-col fixed z-30 bottom-0 top-0 right-[-1px] ${width} bg-black border-l border-white text-l font-bold`}
       >
         <li
           className="flex justify-start items-center mx-[10px] h-[50px] border-b border-neutral-700"
