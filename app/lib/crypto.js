@@ -6,7 +6,7 @@
  *
  * @param   {String} plaintext - Plaintext to be encrypted.
  * @param   {String} password - Password to use to encrypt plaintext.
- * @returns {String} Encrypted ciphertext.
+ * @returns {Promise<String>} Encrypted ciphertext.
  *
  * @example
  *   const ciphertext = await aesGcmEncrypt('my secret text', 'pw');
@@ -42,7 +42,7 @@ export async function encrypt(plaintext, password) {
  *
  * @param   {String} ciphertext - Ciphertext to be decrypted.
  * @param   {String} password - Password to use to decrypt ciphertext.
- * @returns {String} Decrypted plaintext.
+ * @returns {Promise<String>} Decrypted plaintext.
  *
  * @example
  *   const plaintext = await aesGcmDecrypt(ciphertext, 'pw');

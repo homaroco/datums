@@ -2,14 +2,15 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { v4 } from 'uuid'
 
-import { DatumProps, TagProps } from './types'
-import { encrypt, decrypt } from './lib/crypto.js'
-
 import StagedDatum from './components/StagedDatum'
 import Header from './components/Header'
 import DatumList from './components/DatumList'
 import LoginPage from './components/LoginPage'
 import AppMenu from './components/AppMenu'
+
+import { encrypt, decrypt } from './lib/crypto.js'
+
+import { TagProps } from './types'
 
 export default function App() {
   const [datums, setDatums] = useState<any[]>([])
@@ -21,8 +22,10 @@ export default function App() {
   const [userPassword, setUserPassword] = useState('')
   const [isAppMenuOpen, setIsAppMenuOpen] = useState(false)
 
+  // ref used to fade out login page
   const loginPageRef = useRef<HTMLElement>(null)
 
+  // load tags and datums when user is set
   useEffect(() => {
     setIsLoading(true)
     async function fetchDatumsAndTags() {
@@ -41,8 +44,9 @@ export default function App() {
     const form = []
     const encodedUserId = encodeURIComponent(userId)
     form.push(encodedUserId)
+    let tags
     try {
-      const tags = await fetch(`http://localhost:3000/api/tags`, {
+      tags = await fetch(`http://localhost:3000/api/tags`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -136,8 +140,6 @@ export default function App() {
       const userPassword = localStorage.getItem('userPassword')
       if (userEmail && userPassword) {
         const userId = await encrypt(userEmail, userPassword)
-        const test1 = await encrypt('test', 'cool')
-        const test2 = await encrypt('test', 'cool')
         setUserId(userId)
         setIsLoggedIn(true)
       }
@@ -201,7 +203,6 @@ export default function App() {
     setTimeout(() => {
       setIsLoggedIn(true)
     }, 1000)
-    // return () => loginPageRef.current.style.opacity = 1
   }
 
   async function login(e: any) {
@@ -209,7 +210,6 @@ export default function App() {
     fadeOutLoginPage()
     const userId = await encrypt(userEmail, userPassword)
     setUserId(userId)
-    // userKey = await encrypt(userPassword, userPassword)
     localStorage.setItem('userId', userId)
   }
 
