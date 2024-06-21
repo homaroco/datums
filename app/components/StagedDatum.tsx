@@ -133,7 +133,6 @@ export default function StagedDatum({
   }
 
   function updateStagedTagFromValueMenu(value: string) {
-    console.log(value)
     const newTags = [...stagedTags].map((tag) =>
       activeTag && tag.id === activeTag.id ? { ...tag, value } : tag
     )

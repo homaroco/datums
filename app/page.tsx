@@ -22,7 +22,6 @@ export default function App() {
   const [isAppMenuOpen, setIsAppMenuOpen] = useState(false)
 
   const loginPageRef = useRef<HTMLElement>(null)
-  console.log(tags)
 
   useEffect(() => {
     setIsLoading(true)
@@ -139,7 +138,6 @@ export default function App() {
         const userId = await encrypt(userEmail, userPassword)
         const test1 = await encrypt('test', 'cool')
         const test2 = await encrypt('test', 'cool')
-        console.log(userId, test1, test2)
         setUserId(userId)
         setIsLoggedIn(true)
       }
@@ -210,7 +208,6 @@ export default function App() {
     e.preventDefault()
     fadeOutLoginPage()
     const userId = await encrypt(userEmail, userPassword)
-    console.log(userId)
     setUserId(userId)
     // userKey = await encrypt(userPassword, userPassword)
     localStorage.setItem('userId', userId)

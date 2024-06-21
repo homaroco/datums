@@ -18,7 +18,6 @@ function color() {
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const userId = searchParams.get('userId')
-  console.log('userId', userId)
   let datums
   try {
     datums = await prisma.datum.findMany({

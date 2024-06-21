@@ -88,11 +88,8 @@ export default function StagedDatum({
   }
 
   function updateValueForTag(e: any, index: number) {
-    console.log(e)
     e.preventDefault()
-    console.log(e.key)
     if (e.key === 'Enter') {
-      console.log('Enter!')
       addTagToStaged(e)
     } else {
       const tags = [...stagedTags]
@@ -195,7 +192,11 @@ export default function StagedDatum({
                 />
                 {tagInputValues[tagInputValues.length - 1] && (
                   <button
-                    className={`flex items-center rounded-tr rounded-br justify-center w-[30px] h-[30px] text-lg text-black ${focusedInputIndex === stagedTags.length ? 'bg-white' : 'bg-neutral-700'}`}
+                    className={`flex items-center rounded-tr rounded-br justify-center w-[30px] h-[30px] text-lg text-black ${
+                      focusedInputIndex === stagedTags.length
+                        ? 'bg-white'
+                        : 'bg-neutral-700'
+                    }`}
                     onClick={addTagToStaged}
                   >
                     <FaPlus />
