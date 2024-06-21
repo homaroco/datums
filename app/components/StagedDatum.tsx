@@ -33,6 +33,8 @@ export default function StagedDatum({
   const [activeTag, setActiveTag] = useState<StagedTag | null>(null)
   const [isMenuOpen, setIsMenuOpen] = useState<'name' | 'value' | false>(false)
 
+  const createDatumBtnRef = useRef<HTMLButtonElement>(null)
+
   const nameInputRefs = useRef<MutableRefObject<HTMLInputElement>[]>([])
   nameInputRefs.current = stagedTags.map(
     (tag, i) => nameInputRefs.current[i] ?? React.createRef()
@@ -63,8 +65,8 @@ export default function StagedDatum({
     })
     setValueWidths(valueWidths)
 
-    if (getFocusedTag(stagedTags) === false && isNameInputFocused === false)
-      (document.activeElement as HTMLElement).blur()
+    // if (getFocusedTag(stagedTags) === false && isNameInputFocused === false)
+    //   (document.activeElement as HTMLElement).blur()
   }, [stagedTags])
 
   function focusNameInput() {
@@ -99,6 +101,7 @@ export default function StagedDatum({
       focused: false,
     }))
     setStagedTags(newTags)
+    createDatumBtnRef.current?.focus()
   }
 
   function createTag(e: KeyboardEvent<HTMLInputElement>) {
@@ -117,7 +120,7 @@ export default function StagedDatum({
     setNameInput('')
     setIsNameInputFocused(false)
     setIsMenuOpen(false)
-    ;(e.target as HTMLInputElement).blur()
+    createDatumBtnRef.current?.focus()
   }
 
   function convertAddValueBtnToInput(index: number) {
@@ -238,17 +241,17 @@ export default function StagedDatum({
             </div>
           </div>
         </div>
-        {stagedTags.length ? (
-          <button
-            className="flex items-center justify-center text-3xl w-[50px] h-[50px] text-neutral-500 active:hover:text-white"
-            onClick={() => {
-              createDatum(stagedTags)
-              setStagedTags([])
-            }}
-          >
-            <FaPlus />
-          </button>
-        ) : null}
+        <button
+          className="flex items-center justify-center text-3xl w-[50px] h-[50px] text-neutral-500 active:hover:text-white"
+          disabled={stagedTags.length === 0}
+          ref={createDatumBtnRef}
+          onClick={() => {
+            createDatum(stagedTags)
+            setStagedTags([])
+          }}
+        >
+          <FaPlus />
+        </button>
       </div>
     </footer>
   )
