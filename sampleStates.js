@@ -36,7 +36,7 @@ const four = [
   {
     isFocused: false,
     name: '',
-  }
+  },
 ]
 
 const five = [
@@ -48,8 +48,8 @@ const five = [
   },
   {
     isFocused: false,
-    name: ''
-  }
+    name: '',
+  },
 ]
 
 const fiveA = [
@@ -61,7 +61,7 @@ const fiveA = [
   {
     isFocused: true,
     name: '',
-  }
+  },
 ]
 
 const six = [
@@ -73,8 +73,8 @@ const six = [
   },
   {
     isFocused: false,
-    name: ''
-  }
+    name: '',
+  },
 ]
 
 const seven = [
@@ -86,8 +86,8 @@ const seven = [
   },
   {
     isFocused: false,
-    name: ''
-  }
+    name: '',
+  },
 ]
 
 const eight = [
@@ -100,7 +100,7 @@ const eight = [
   {
     isFocused: true,
     name: '',
-  }
+  },
 ]
 
 const nine = [
@@ -113,7 +113,7 @@ const nine = [
   {
     isFocused: true,
     name: 'C',
-  }
+  },
 ]
 
 const ten = [
@@ -131,7 +131,7 @@ const ten = [
   {
     isFocused: true,
     name: '',
-  }
+  },
 ]
 
 const sevenA = [
@@ -143,8 +143,8 @@ const sevenA = [
   },
   {
     isFocused: false,
-    name: ''
-  }
+    name: '',
+  },
 ]
 
 const sevenB = [
@@ -156,6 +156,6 @@ const sevenB = [
   },
   {
     isFocused: false,
-    name: ''
-  }
+    name: '',
+  },
 ]

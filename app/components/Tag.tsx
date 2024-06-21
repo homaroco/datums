@@ -1,11 +1,11 @@
-import { getContrastColor } from "../lib/color";
-import { TagProps } from "../types";
+import { getContrastColor } from '../lib/color'
+import { TagProps } from '../types'
 
 export function Tag({ name, value, unit, color }: TagProps) {
-  let roundedValue = "rounded-tr rounded-br";
-  let padding = "pr-[6px]";
-  if (unit) roundedValue = "";
-  if (!value) padding = "pr-[8px]";
+  let roundedValue = 'rounded-tr rounded-br'
+  let padding = 'pr-[6px]'
+  if (unit) roundedValue = ''
+  if (!value) padding = 'pr-[8px]'
   return (
     <span className="tag inline-flex rounded overflow-hidden h-[30px] font-bold mr-[5px] whitespace-nowrap">
       {name && (
@@ -37,5 +37,5 @@ export function Tag({ name, value, unit, color }: TagProps) {
         </button>
       )}
     </span>
-  );
+  )
 }

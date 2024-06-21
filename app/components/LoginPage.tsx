@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react'
 
 export default function LoginPage({
   loginPageRef,
@@ -8,14 +8,14 @@ export default function LoginPage({
   setUserEmail,
   setUserPassword,
 }: any) {
-  const [rememberCredentials, setRememberCredentials] = useState(false);
+  const [rememberCredentials, setRememberCredentials] = useState(false)
 
   useEffect(() => {
     if (rememberCredentials) {
-      localStorage.setItem("userEmail", userEmail);
-      localStorage.setItem("userPassword", userPassword);
+      localStorage.setItem('userEmail', userEmail)
+      localStorage.setItem('userPassword', userPassword)
     }
-  }, [rememberCredentials]);
+  }, [rememberCredentials])
 
   return (
     <section
@@ -64,5 +64,5 @@ export default function LoginPage({
         )}
       </form>
     </section>
-  );
+  )
 }

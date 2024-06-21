@@ -1,91 +1,91 @@
-import React, { useEffect, useRef, useState } from "react";
-import { TagNameMenu, TagValueMenu } from "./TagMenus";
-import { getContrastColor, getRandomHex } from "../lib/utils";
-import { FaPlus } from "react-icons/fa6";
-import { v4 as uuid } from "uuid";
+import React, { useEffect, useRef, useState } from 'react'
+import { TagNameMenu, TagValueMenu } from './TagMenus'
+import { getContrastColor, getRandomHex } from '../lib/utils'
+import { FaPlus } from 'react-icons/fa6'
+import { v4 as uuid } from 'uuid'
 
 interface StagedTag {
-  id: string;
-  color: string;
-  name: string;
-  value: string | undefined;
-  focused: "name" | "value" | boolean;
-  width: number;
+  id: string
+  color: string
+  name: string
+  value: string | undefined
+  focused: 'name' | 'value' | boolean
+  width: number
 }
 
-function getFocusedTag(tags) {
-  const focusedTag = [...tags].filter((tag) => tag.focused !== false);
-  if (!focusedTag.length) return false;
-  else return focusedTag[0];
+function getFocusedTag(tags: StagedTag[]) {
+  const focusedTag = [...tags].filter((tag) => tag.focused !== false)
+  if (!focusedTag.length) return false
+  else return focusedTag[0]
 }
 
 export default function StagedDatum({ tags, createDatum }) {
-  const [stagedTags, setStagedTags] = useState<StagedTag[]>([]);
-  const [nameWidths, setNameWidths] = useState<number[]>([]);
-  const [valueWidths, setValueWidths] = useState<number[]>([]);
-  const [nameInput, setNameInput] = useState<string>("");
-  const [isNameInputFocused, setIsNameInputFocused] = useState<boolean>(false);
-  const [activeTag, setActiveTag] = useState<StagedTag | null>(null);
-  const [isMenuOpen, setIsMenuOpen] = useState<"name" | "value" | false>(false);
+  const [stagedTags, setStagedTags] = useState<StagedTag[]>([])
+  const [nameWidths, setNameWidths] = useState<number[]>([])
+  const [valueWidths, setValueWidths] = useState<number[]>([])
+  const [nameInput, setNameInput] = useState<string>('')
+  const [isNameInputFocused, setIsNameInputFocused] = useState<boolean>(false)
+  const [activeTag, setActiveTag] = useState<StagedTag | null>(null)
+  const [isMenuOpen, setIsMenuOpen] = useState<'name' | 'value' | false>(false)
 
-  const nameInputRefs = useRef([]);
+  const nameInputRefs = useRef([])
   nameInputRefs.current = stagedTags.map(
-    (tag, i) => nameInputRefs.current[i] ?? React.createRef(),
-  );
+    (tag, i) => nameInputRefs.current[i] ?? React.createRef()
+  )
 
-  const nameSpanRefs = useRef([]);
+  const nameSpanRefs = useRef([])
   nameSpanRefs.current = stagedTags.map(
-    (tag, i) => nameSpanRefs.current[i] ?? React.createRef(),
-  );
+    (tag, i) => nameSpanRefs.current[i] ?? React.createRef()
+  )
 
-  const valueInputRefs = useRef([]);
+  const valueInputRefs = useRef([])
   valueInputRefs.current = stagedTags.map(
-    (tag, i) => valueInputRefs.current[i] ?? React.createRef(),
-  );
+    (tag, i) => valueInputRefs.current[i] ?? React.createRef()
+  )
 
-  const valueSpanRefs = useRef([]);
+  const valueSpanRefs = useRef([])
   valueSpanRefs.current = stagedTags.map(
-    (tag, i) => valueSpanRefs.current[i] ?? React.createRef(),
-  );
+    (tag, i) => valueSpanRefs.current[i] ?? React.createRef()
+  )
 
   useEffect(() => {
     const nameWidths = stagedTags.map((tag, i) => {
-      return nameSpanRefs.current[i].current.offsetWidth;
-    });
-    setNameWidths(nameWidths);
+      return nameSpanRefs.current[i].current.offsetWidth
+    })
+    setNameWidths(nameWidths)
     const valueWidths = stagedTags.map((tag, i) => {
-      return valueSpanRefs.current[i].current.offsetWidth;
-    });
-    setValueWidths(valueWidths);
+      return valueSpanRefs.current[i].current.offsetWidth
+    })
+    setValueWidths(valueWidths)
 
     if (getFocusedTag(stagedTags) === false && isNameInputFocused === false) {
-      document.activeElement.blur();
+      document.activeElement.blur()
     }
-  }, [stagedTags]);
+  }, [stagedTags])
 
   function focusNameInput() {
-    blurTags();
-    setIsNameInputFocused(true);
-    setIsMenuOpen("name");
+    blurTags()
+    setIsNameInputFocused(true)
+    setIsMenuOpen('name')
   }
 
-  function focusTag(nameOrValue: "name" | "value", index: number) {
+  function focusTag(nameOrValue: 'name' | 'value', index: number) {
     // focus the name or value of the ith tag
     const newTags = [...stagedTags].map((tag, i) =>
-      i === index ? { ...tag, focused: nameOrValue } : tag,
-    );
-    setIsMenuOpen(nameOrValue);
-    setActiveTag(newTags[index]);
-    setStagedTags(newTags);
+      i === index ? { ...tag, focused: nameOrValue } : tag
+    )
+    setIsMenuOpen(nameOrValue)
+    setActiveTag(newTags[index])
+    setStagedTags(newTags)
   }
 
-  function changeTag(nameOrValue: "name" | "value", index: number, e: any) {
+  function changeTag(nameOrValue: 'name' | 'value', index: number, e: any) {
     // set the name or value of the ith tag to the input value
     const newTags = [...stagedTags].map((tag, i) =>
-      i === index ? { ...tag, [nameOrValue]: e.target.value } : tag,
-    );
-    setActiveTag(newTags[index]);
-    setStagedTags(newTags);
+      i === index ? { ...tag, [nameOrValue]: e.target.value } : tag
+    )
+    setActiveTag(newTags[index])
+    setStagedTags(newTags)
   }
 
   function blurTags() {
@@ -93,13 +93,13 @@ export default function StagedDatum({ tags, createDatum }) {
     const newTags = [...stagedTags].map((tag) => ({
       ...tag,
       focused: false,
-    }));
-    setStagedTags(newTags);
+    }))
+    setStagedTags(newTags)
   }
 
   function createTag(e) {
-    if (e.key !== "Enter") {
-      return;
+    if (e.key !== 'Enter') {
+      return
     }
     const newTags = [...stagedTags].concat({
       id: uuid(),
@@ -107,33 +107,33 @@ export default function StagedDatum({ tags, createDatum }) {
       name: e.target.value,
       value: undefined,
       focused: false,
-    });
-    setStagedTags(newTags);
-    setNameInput("");
-    setIsNameInputFocused(false);
-    setIsMenuOpen(false);
-    e.target.blur();
+    })
+    setStagedTags(newTags)
+    setNameInput('')
+    setIsNameInputFocused(false)
+    setIsMenuOpen(false)
+    e.target.blur()
   }
 
   function convertAddValueBtnToInput(index: number) {
     const newTags = [...stagedTags].map((tag, i) =>
-      i === index ? { ...tag, value: "" } : tag,
-    );
-    setStagedTags(newTags);
+      i === index ? { ...tag, value: '' } : tag
+    )
+    setStagedTags(newTags)
   }
 
   function createStagedTagFromNameMenu(tag) {
-    const newTags = [...stagedTags].concat(tag);
-    setStagedTags(newTags);
+    const newTags = [...stagedTags].concat(tag)
+    setStagedTags(newTags)
   }
 
   function updateStagedTagFromValueMenu(value: string) {
-    console.log(value);
+    console.log(value)
     const newTags = [...stagedTags].map((tag) =>
-      activeTag && tag.id === activeTag.id ? { ...tag, value } : tag,
-    );
-    setStagedTags(newTags);
-    setIsMenuOpen(false);
+      activeTag && tag.id === activeTag.id ? { ...tag, value } : tag
+    )
+    setStagedTags(newTags)
+    setIsMenuOpen(false)
   }
 
   return (
@@ -142,12 +142,12 @@ export default function StagedDatum({ tags, createDatum }) {
       className="flex flex-col relative items-center justify-between bottom-0 h-auto w-full border-t border-neutral-700 bg-black"
     >
       <TagNameMenu
-        isVisible={isMenuOpen === "name" && tags.length}
+        isVisible={isMenuOpen === 'name' && tags.length}
         tags={tags}
         selectTag={createStagedTagFromNameMenu}
       />
       <TagValueMenu
-        isVisible={isMenuOpen === "value" && tags.length}
+        isVisible={isMenuOpen === 'value' && tags.length}
         nameTag={activeTag}
         tags={tags}
         selectValue={updateStagedTagFromValueMenu}
@@ -165,10 +165,10 @@ export default function StagedDatum({ tags, createDatum }) {
                     <input
                       className="inline-flex relative items-center pr-[8px] pl-[8px] min-w-[17px]"
                       value={tag.name}
-                      onFocus={() => focusTag("name", i)}
+                      onFocus={() => focusTag('name', i)}
                       onBlur={blurTags}
-                      onKeyDown={(e) => e.key === "Enter" && blurTags()}
-                      onChange={(e) => changeTag("name", i, e)}
+                      onKeyDown={(e) => e.key === 'Enter' && blurTags()}
+                      onChange={(e) => changeTag('name', i, e)}
                       ref={nameInputRefs.current[i]}
                       style={{
                         backgroundColor: tag.color,
@@ -182,21 +182,21 @@ export default function StagedDatum({ tags, createDatum }) {
                     >
                       {tag.name}
                     </span>
-                    {typeof tag.value === "string" ? (
+                    {typeof tag.value === 'string' ? (
                       <input
                         className="flex items-center rounded-tr rounded-br border-2 px-[6px]"
-                        value={tag.value === undefined ? "" : tag.value}
+                        value={tag.value === undefined ? '' : tag.value}
                         placeholder="value"
                         autoFocus
-                        onFocus={() => focusTag("value", i)}
+                        onFocus={() => focusTag('value', i)}
                         onBlur={() => blurTags(false)}
-                        onKeyDown={(e) => e.key === "Enter" && blurTags()}
-                        onChange={(e) => changeTag("value", i, e)}
+                        onKeyDown={(e) => e.key === 'Enter' && blurTags()}
+                        onChange={(e) => changeTag('value', i, e)}
                         style={{
                           color: tag.color,
                           backgroundColor: getContrastColor(tag.color),
                           borderColor: tag.color,
-                          width: tag.value === "" ? "50px" : valueWidths[i] + 1, // extra pixel allows selecting end of string
+                          width: tag.value === '' ? '50px' : valueWidths[i] + 1, // extra pixel allows selecting end of string
                         }}
                       ></input>
                     ) : (
@@ -218,7 +218,7 @@ export default function StagedDatum({ tags, createDatum }) {
                       {tag.value}
                     </span>
                   </span>
-                );
+                )
               })}
               <input
                 className="flex items-center border rounded px-[5px] h-[30px] ph-[1px] w-[66px] placeholder-neutral-700 border-neutral-700 bg-black focus:border-white text-neutral-700 focus:text-white focus:outline-none focus:placeholder:text-white"
@@ -236,8 +236,8 @@ export default function StagedDatum({ tags, createDatum }) {
           <button
             className="flex items-center justify-center text-3xl w-[50px] h-[50px] text-neutral-500 active:hover:text-white"
             onClick={() => {
-              createDatum(stagedTags);
-              setStagedTags([]);
+              createDatum(stagedTags)
+              setStagedTags([])
             }}
           >
             <FaPlus />
@@ -245,5 +245,5 @@ export default function StagedDatum({ tags, createDatum }) {
         ) : null}
       </div>
     </footer>
-  );
+  )
 }

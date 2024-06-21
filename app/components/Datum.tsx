@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { BsThreeDots } from "react-icons/bs";
-import { getTimestamp } from "../lib/time";
-import { DatumProps, TagProps } from "../types";
-import { Tag } from "./Tag";
+import { useState } from 'react'
+import { BsThreeDots } from 'react-icons/bs'
+import { getTimestamp } from '../lib/time'
+import { DatumProps, TagProps } from '../types'
+import { Tag } from './Tag'
 
 export default function Datum({
   id,
@@ -10,12 +10,12 @@ export default function Datum({
   tags,
   deleteDatum,
 }: {
-  id: string;
-  createdAt: number;
-  tags: TagProps[];
-  deleteDatum: (id: string) => void;
+  id: string
+  createdAt: number
+  tags: TagProps[]
+  deleteDatum: (id: string) => void
 }) {
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false)
   return (
     <li
       id={`${id}`}
@@ -62,5 +62,5 @@ export default function Datum({
         </div>
       )}
     </li>
-  );
+  )
 }

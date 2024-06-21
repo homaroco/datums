@@ -1,7 +1,7 @@
-import { FaPlus } from "react-icons/fa6";
-import { getContrastColor } from "../lib/color";
-import { TagProps } from "../types";
-import ValueInput from "./ValueInput";
+import { FaPlus } from 'react-icons/fa6'
+import { getContrastColor } from '../lib/color'
+import { TagProps } from '../types'
+import ValueInput from './ValueInput'
 
 export default function StagedTag({
   name,
@@ -14,10 +14,10 @@ export default function StagedTag({
   onValueChange,
   onValueSubmit,
 }: any) {
-  let roundedValue = "rounded-tr rounded-br";
-  let padding = "pr-[6px]";
-  if (unit) roundedValue = "";
-  if (!value) padding = "pr-[8px]";
+  let roundedValue = 'rounded-tr rounded-br'
+  let padding = 'pr-[6px]'
+  if (unit) roundedValue = ''
+  if (!value) padding = 'pr-[8px]'
   return (
     <span className="staged-tag inline-flex rounded overflow-hidden h-[30px] font-bold mr-[5px] whitespace-nowrap">
       {name && (
@@ -57,7 +57,7 @@ export default function StagedTag({
           <FaPlus />
         </button>
       )}
-      {focused === "value" && (
+      {focused === 'value' && (
         <ValueInput
           color={color}
           value={value}
@@ -66,5 +66,5 @@ export default function StagedTag({
         />
       )}
     </span>
-  );
+  )
 }

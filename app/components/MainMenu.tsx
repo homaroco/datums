@@ -3,12 +3,12 @@ export default function MainMenu({
   closeMenu,
   logout,
 }: {
-  isOpen: boolean;
-  closeMenu: () => void;
-  logout: () => void;
+  isOpen: boolean
+  closeMenu: () => void
+  logout: () => void
 }) {
-  let width = "w-[0%]";
-  if (isOpen) width = "w-[50%]";
+  let width = 'w-[0%]'
+  if (isOpen) width = 'w-[50%]'
   return (
     <>
       <ul
@@ -46,5 +46,5 @@ export default function MainMenu({
         ></div>
       )}
     </>
-  );
+  )
 }

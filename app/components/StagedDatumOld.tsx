@@ -1,35 +1,35 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react'
 
-import { TagNameMenu, TagValueMenu } from "./TagMenus";
-import DatumBarValueInput from "./ValueInput";
-import NameInput from "./NameInput";
-import { getRandomHex } from "../lib/utils";
+import { TagNameMenu, TagValueMenu } from './TagMenus'
+import DatumBarValueInput from './ValueInput'
+import NameInput from './NameInput'
+import { getRandomHex } from '../lib/utils'
 
-import { TagProps } from "../types";
-import { FaPlus } from "react-icons/fa6";
-import StagedTag from "./StagedTag";
+import { TagProps } from '../types'
+import { FaPlus } from 'react-icons/fa6'
+import StagedTag from './StagedTag'
 
 interface StagedTagProps extends TagProps {
-  focused: false | "name" | "value";
+  focused: false | 'name' | 'value'
 }
 
 export default function StagedDatum({
   tags,
   addActiveDatum,
 }: {
-  tags: TagProps[];
-  addActiveDatum: (tags: TagProps[]) => void;
+  tags: TagProps[]
+  addActiveDatum: (tags: TagProps[]) => void
 }) {
-  const [stagedTags, setStagedTags] = useState<StagedTagProps[]>([]);
-  const [activeTag, setActiveTag] = useState<TagProps | null>(null);
-  const [tagInputValues, setTagInputValues] = useState<string[]>([""]);
-  const [isMenuVisible, setIsMenuVisible] = useState<false | "name" | "value">(
-    false,
-  );
+  const [stagedTags, setStagedTags] = useState<StagedTagProps[]>([])
+  const [activeTag, setActiveTag] = useState<TagProps | null>(null)
+  const [tagInputValues, setTagInputValues] = useState<string[]>([''])
+  const [isMenuVisible, setIsMenuVisible] = useState<false | 'name' | 'value'>(
+    false
+  )
   const [focusedInputIndex, setFocusedInputIndex] = useState<number | null>(
-    null,
-  );
-  const [nameInputValue, setNameInputValue] = useState("");
+    null
+  )
+  const [nameInputValue, setNameInputValue] = useState('')
   // useEffect(() => {
   //   if (newTagNameDummyRef.current) {
   //     setInputWidth(newTagNameDummyRef.current.offsetWidth || 72)
@@ -37,23 +37,23 @@ export default function StagedDatum({
   // }, [tagInputValues])
 
   function beginCreateActiveTag(index: number) {
-    setFocusedInputIndex(index);
+    setFocusedInputIndex(index)
     if (stagedTags[index] && stagedTags[index].name) {
-      setIsMenuVisible("value");
+      setIsMenuVisible('value')
     } else {
-      setIsMenuVisible("name");
+      setIsMenuVisible('name')
     }
   }
 
   function endCreateActiveTag(e: any) {
-    setFocusedInputIndex(null);
-    if (e.target.value) return;
-    if (activeTag !== null) return;
-    setIsMenuVisible(false);
+    setFocusedInputIndex(null)
+    if (e.target.value) return
+    if (activeTag !== null) return
+    setIsMenuVisible(false)
   }
 
   function addTagToStaged(e: any) {
-    e.preventDefault();
+    e.preventDefault()
     // TODO check if it exists already
     // if not, add to tag name menu
     // let newTag
@@ -78,29 +78,29 @@ export default function StagedDatum({
         value: undefined,
         focused: false,
       },
-    ]);
-    setNameInputValue("");
-    endCreateActiveTag(e);
+    ])
+    setNameInputValue('')
+    endCreateActiveTag(e)
   }
 
   function addNameTagToStaging(tag: TagProps) {
-    setStagedTags([...stagedTags, tag]);
+    setStagedTags([...stagedTags, tag])
   }
 
   function updateValueForTag(e: any, index: number) {
-    console.log(e);
-    e.preventDefault();
-    console.log(e.key);
-    if (e.key === "Enter") {
-      console.log("Enter!");
-      addTagToStaged(e);
+    console.log(e)
+    e.preventDefault()
+    console.log(e.key)
+    if (e.key === 'Enter') {
+      console.log('Enter!')
+      addTagToStaged(e)
     } else {
-      const tags = [...stagedTags];
+      const tags = [...stagedTags]
       tags[index] = {
         ...tags[index],
         value: e.target.value,
-      };
-      setStagedTags(tags);
+      }
+      setStagedTags(tags)
       // let values = [...tagInputValues]
       // values[index] = e.target.value
       // setTagInputValues(values)
@@ -108,57 +108,57 @@ export default function StagedDatum({
   }
 
   function submitActiveDatum() {
-    addActiveDatum(stagedTags);
-    setStagedTags([]);
+    addActiveDatum(stagedTags)
+    setStagedTags([])
   }
 
   function addToActiveTags(tag: StagedTagProps) {
-    setStagedTags([...stagedTags, tag]);
+    setStagedTags([...stagedTags, tag])
   }
 
   function convertToValuelessTag(tag: TagProps) {
-    setActiveTag(tag);
-    setIsMenuVisible("value");
+    setActiveTag(tag)
+    setIsMenuVisible('value')
   }
 
   function addValueToActiveTag(value: string) {
-    if (!activeTag) return;
-    setIsMenuVisible(false);
+    if (!activeTag) return
+    setIsMenuVisible(false)
     addToActiveTags({
       name: activeTag.name,
       value,
       color: activeTag.color,
-    });
-    setActiveTag(null);
+    })
+    setActiveTag(null)
   }
 
   function addValueToTag(index: number) {
-    const tags = [...stagedTags];
-    tags[index] = { ...tags[index], value: undefined, focused: "value" };
-    setFocusedInputIndex(index);
-    setStagedTags(tags);
-    setActiveTag(tags[index]);
+    const tags = [...stagedTags]
+    tags[index] = { ...tags[index], value: undefined, focused: 'value' }
+    setFocusedInputIndex(index)
+    setStagedTags(tags)
+    setActiveTag(tags[index])
   }
 
   function updateNameInput(e) {
-    if (e.key === "Enter") {
-      addTagToStaged(e);
+    if (e.key === 'Enter') {
+      addTagToStaged(e)
     } else {
-      setNameInputValue(e.target.value);
+      setNameInputValue(e.target.value)
     }
   }
 
   return (
     <footer className="flex flex-col relative items-center justify-between bottom-0 h-auto w-full border-t border-neutral-700 bg-black">
       <TagNameMenu
-        isVisible={isMenuVisible === "name"}
+        isVisible={isMenuVisible === 'name'}
         tags={tags}
         convertToValuelessTag={convertToValuelessTag}
         createNameTagFromButton={addNameTagToStaging}
       />
       {activeTag && (
         <TagValueMenu
-          isVisible={isMenuVisible === "value"}
+          isVisible={isMenuVisible === 'value'}
           nameTag={activeTag}
           tags={tags}
           onClick={() => addValueToActiveTag(i)}
@@ -176,7 +176,7 @@ export default function StagedDatum({
                     onClickAddValue={() => addValueToTag(i)}
                     onValueChange={(e) => updateValueForTag(e, i)}
                   />
-                );
+                )
               })}
               <form
                 onSubmit={addTagToStaged}
@@ -195,7 +195,7 @@ export default function StagedDatum({
                 />
                 {tagInputValues[tagInputValues.length - 1] && (
                   <button
-                    className={`flex items-center rounded-tr rounded-br justify-center w-[30px] h-[30px] text-lg text-black ${focusedInputIndex === stagedTags.length ? "bg-white" : "bg-neutral-700"}`}
+                    className={`flex items-center rounded-tr rounded-br justify-center w-[30px] h-[30px] text-lg text-black ${focusedInputIndex === stagedTags.length ? 'bg-white' : 'bg-neutral-700'}`}
                     onClick={addTagToStaged}
                   >
                     <FaPlus />
@@ -215,5 +215,5 @@ export default function StagedDatum({
         ) : null}
       </div>
     </footer>
-  );
+  )
 }

@@ -1,18 +1,18 @@
-import { TagProps } from "../types";
-import { Tag } from "./Tag";
+import { TagProps } from '../types'
+import { Tag } from './Tag'
 
 function getUniqueTagNames(tags: TagProps[]) {
-  const uniqueTagNameObj: any = {};
+  const uniqueTagNameObj: any = {}
   for (let { name, value, color } of tags) {
-    if (!name) continue;
+    if (!name) continue
     uniqueTagNameObj[name] = {
       name,
       color,
       count: uniqueTagNameObj[name] ? uniqueTagNameObj[name].count + 1 : 1,
-    };
+    }
   }
-  const uniqueTagNameCounts = Object.values(uniqueTagNameObj);
-  return uniqueTagNameCounts.sort((a: any, b: any) => b.count - a.count);
+  const uniqueTagNameCounts = Object.values(uniqueTagNameObj)
+  return uniqueTagNameCounts.sort((a: any, b: any) => b.count - a.count)
 }
 
 export function TagNameMenu({
@@ -20,27 +20,27 @@ export function TagNameMenu({
   tags,
   selectTag,
 }: {
-  isVisible: boolean;
-  tags: TagProps[];
-  selectTag: (tag: TagProps) => void;
+  isVisible: boolean
+  tags: TagProps[]
+  selectTag: (tag: TagProps) => void
 }) {
   const uniqueNameTags = getUniqueTagNames(tags).map((tag: any, i: number) => (
     <span
       onClick={() => {
-        selectTag(tag);
+        selectTag(tag)
       }}
       key={i}
       className="pb-[5px]"
     >
       <Tag {...{ name: tag.name, color: tag.color }} />
     </span>
-  ));
+  ))
 
-  let height = "max-h-0 opacity-0";
-  let border = "border-b-[1px]";
+  let height = 'max-h-0 opacity-0'
+  let border = 'border-b-[1px]'
   if (isVisible) {
-    height = "max-h-[150px] opacity-100";
-    border = "border-b-[1px]";
+    height = 'max-h-[150px] opacity-100'
+    border = 'border-b-[1px]'
   }
 
   return (
@@ -55,30 +55,30 @@ export function TagNameMenu({
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 function getUniqueTagValues(tags: TagProps[], tagName: string) {
-  const uniqueTagNameObj: any = {};
+  const uniqueTagNameObj: any = {}
   for (let { name, value, color } of tags) {
-    if (!name) continue;
-    if (name !== tagName) continue;
+    if (!name) continue
+    if (name !== tagName) continue
     uniqueTagNameObj[name] = {
       value,
       color,
       count: uniqueTagNameObj[name] ? uniqueTagNameObj[name].count + 1 : 1,
-    };
+    }
   }
-  const uniqueTagNameCounts = Object.values(uniqueTagNameObj);
-  return uniqueTagNameCounts.sort((a: any, b: any) => b.count - a.count);
+  const uniqueTagNameCounts = Object.values(uniqueTagNameObj)
+  return uniqueTagNameCounts.sort((a: any, b: any) => b.count - a.count)
 }
 
 interface StagedTag {
-  color: string;
-  name: string;
-  value: string | undefined;
-  focused: "name" | "value" | boolean;
-  width: number;
+  color: string
+  name: string
+  value: string | undefined
+  focused: 'name' | 'value' | boolean
+  width: number
 }
 
 export function TagValueMenu({
@@ -87,30 +87,30 @@ export function TagValueMenu({
   tags,
   selectValue,
 }: {
-  isVisible: boolean;
-  nameTag: StagedTag | null;
-  tags: TagProps[];
-  selectValue: (value: string) => void;
+  isVisible: boolean
+  nameTag: StagedTag | null
+  tags: TagProps[]
+  selectValue: (value: string) => void
 }) {
-  let height = "max-h-0 opacity-0";
-  let border = "border-b-0";
+  let height = 'max-h-0 opacity-0'
+  let border = 'border-b-0'
   if (isVisible) {
-    height = "max-h-[150px] opacity-100";
-    border = "border-b-[1px]";
+    height = 'max-h-[150px] opacity-100'
+    border = 'border-b-[1px]'
   }
 
-  let uniqueValues: string[] = [];
+  let uniqueValues: string[] = []
   tags.forEach((tag) => {
     if (nameTag && tag.value && tag.name === nameTag.name) {
-      if (uniqueValues.indexOf(tag.value) === -1) uniqueValues.push(tag.value);
+      if (uniqueValues.indexOf(tag.value) === -1) uniqueValues.push(tag.value)
     }
-  });
+  })
 
   const uniqueValueTags = uniqueValues.map((value, i) => (
     <span key={i} className="pb-[5px]" onClick={() => selectValue(value)}>
       <Tag {...{ value, color: nameTag.color }} />
     </span>
-  ));
+  ))
 
   return (
     <div
@@ -124,5 +124,5 @@ export function TagValueMenu({
         </div>
       </div>
     </div>
-  );
+  )
 }

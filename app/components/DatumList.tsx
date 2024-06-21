@@ -1,4 +1,4 @@
-import Datum from "./Datum";
+import Datum from './Datum'
 
 export default function DatumList({ datums, deleteDatum }: any) {
   return (
@@ -13,5 +13,5 @@ export default function DatumList({ datums, deleteDatum }: any) {
         ))}
       </ul>
     </section>
-  );
+  )
 }

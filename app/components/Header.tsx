@@ -1,6 +1,6 @@
-import { FaBars } from "react-icons/fa6";
-import { LuArrowDownUp, LuListFilter } from "react-icons/lu";
-import { TbGridDots } from "react-icons/tb";
+import { FaBars } from 'react-icons/fa6'
+import { LuArrowDownUp, LuListFilter } from 'react-icons/lu'
+import { TbGridDots } from 'react-icons/tb'
 
 export default function Header({ openMenu }: any) {
   return (
@@ -36,5 +36,5 @@ export default function Header({ openMenu }: any) {
         </button>
       </span>
     </header>
-  );
+  )
 }
