@@ -1,17 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, {
+  MutableRefObject,
+  KeyboardEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { TagNameMenu, TagValueMenu } from './TagMenus'
 import { getContrastColor, getRandomHex } from '../lib/utils'
 import { FaPlus } from 'react-icons/fa6'
 import { v4 as uuid } from 'uuid'
 
-interface StagedTag {
-  id: string
-  color: string
-  name: string
-  value: string | undefined
-  focused: 'name' | 'value' | boolean
-  width: number
-}
+import { TagProps, StagedTag } from '../types'
 
 function getFocusedTag(tags: StagedTag[]) {
   const focusedTag = [...tags].filter((tag) => tag.focused !== false)
@@ -19,7 +18,13 @@ function getFocusedTag(tags: StagedTag[]) {
   else return focusedTag[0]
 }
 
-export default function StagedDatum({ tags, createDatum }) {
+export default function StagedDatum({
+  tags,
+  createDatum,
+}: {
+  tags: TagProps[]
+  createDatum: (tags: TagProps[]) => void
+}) {
   const [stagedTags, setStagedTags] = useState<StagedTag[]>([])
   const [nameWidths, setNameWidths] = useState<number[]>([])
   const [valueWidths, setValueWidths] = useState<number[]>([])
@@ -28,22 +33,22 @@ export default function StagedDatum({ tags, createDatum }) {
   const [activeTag, setActiveTag] = useState<StagedTag | null>(null)
   const [isMenuOpen, setIsMenuOpen] = useState<'name' | 'value' | false>(false)
 
-  const nameInputRefs = useRef([])
+  const nameInputRefs = useRef<MutableRefObject<HTMLInputElement>[]>([])
   nameInputRefs.current = stagedTags.map(
     (tag, i) => nameInputRefs.current[i] ?? React.createRef()
   )
 
-  const nameSpanRefs = useRef([])
+  const nameSpanRefs = useRef<MutableRefObject<HTMLElement>[]>([])
   nameSpanRefs.current = stagedTags.map(
     (tag, i) => nameSpanRefs.current[i] ?? React.createRef()
   )
 
-  const valueInputRefs = useRef([])
+  const valueInputRefs = useRef<MutableRefObject<HTMLInputElement>[]>([])
   valueInputRefs.current = stagedTags.map(
     (tag, i) => valueInputRefs.current[i] ?? React.createRef()
   )
 
-  const valueSpanRefs = useRef([])
+  const valueSpanRefs = useRef<MutableRefObject<HTMLElement>[]>([])
   valueSpanRefs.current = stagedTags.map(
     (tag, i) => valueSpanRefs.current[i] ?? React.createRef()
   )
@@ -58,9 +63,8 @@ export default function StagedDatum({ tags, createDatum }) {
     })
     setValueWidths(valueWidths)
 
-    if (getFocusedTag(stagedTags) === false && isNameInputFocused === false) {
-      document.activeElement.blur()
-    }
+    if (getFocusedTag(stagedTags) === false && isNameInputFocused === false)
+      (document.activeElement as HTMLElement).blur()
   }, [stagedTags])
 
   function focusNameInput() {
@@ -97,22 +101,23 @@ export default function StagedDatum({ tags, createDatum }) {
     setStagedTags(newTags)
   }
 
-  function createTag(e) {
+  function createTag(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key !== 'Enter') {
       return
     }
     const newTags = [...stagedTags].concat({
       id: uuid(),
       color: getRandomHex(6),
-      name: e.target.value,
+      name: (e.target as HTMLInputElement).value,
       value: undefined,
       focused: false,
+      width: 0,
     })
     setStagedTags(newTags)
     setNameInput('')
     setIsNameInputFocused(false)
     setIsMenuOpen(false)
-    e.target.blur()
+    ;(e.target as HTMLInputElement).blur()
   }
 
   function convertAddValueBtnToInput(index: number) {
@@ -122,7 +127,7 @@ export default function StagedDatum({ tags, createDatum }) {
     setStagedTags(newTags)
   }
 
-  function createStagedTagFromNameMenu(tag) {
+  function createStagedTagFromNameMenu(tag: StagedTag) {
     const newTags = [...stagedTags].concat(tag)
     setStagedTags(newTags)
   }
@@ -142,16 +147,18 @@ export default function StagedDatum({ tags, createDatum }) {
       className="flex flex-col relative items-center justify-between bottom-0 h-auto w-full border-t border-neutral-700 bg-black"
     >
       <TagNameMenu
-        isVisible={isMenuOpen === 'name' && tags.length}
+        isVisible={isMenuOpen === 'name' && tags.length !== 0}
         tags={tags}
         selectTag={createStagedTagFromNameMenu}
       />
-      <TagValueMenu
-        isVisible={isMenuOpen === 'value' && tags.length}
-        nameTag={activeTag}
-        tags={tags}
-        selectValue={updateStagedTagFromValueMenu}
-      />
+      {activeTag && (
+        <TagValueMenu
+          isVisible={isMenuOpen === 'value' && tags.length !== 0}
+          nameTag={activeTag}
+          tags={tags}
+          selectValue={updateStagedTagFromValueMenu}
+        />
+      )}
       <div className="active-datum flex relative items-center justify-between w-full h-[50px] pl-[10px]">
         <div className="flex relative overflow-auto">
           <div className="inline-flex relative grow overflow-auto">
@@ -189,7 +196,7 @@ export default function StagedDatum({ tags, createDatum }) {
                         placeholder="value"
                         autoFocus
                         onFocus={() => focusTag('value', i)}
-                        onBlur={() => blurTags(false)}
+                        onBlur={() => blurTags()}
                         onKeyDown={(e) => e.key === 'Enter' && blurTags()}
                         onChange={(e) => changeTag('value', i, e)}
                         style={{

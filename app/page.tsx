@@ -2,15 +2,13 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { v4 } from 'uuid'
 
-import StagedDatum from './components/StagedDatum'
-
 import { DatumProps, TagProps } from './types'
 import { encrypt, decrypt } from './lib/crypto.js'
 
+import StagedDatum from './components/StagedDatum'
 import Header from './components/Header'
 import DatumList from './components/DatumList'
 import LoginPage from './components/LoginPage'
-
 import AppMenu from './components/AppMenu'
 
 export default function App() {

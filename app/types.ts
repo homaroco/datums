@@ -25,3 +25,12 @@ export interface DatumProps {
   createdAt: number
   tags: TagProps[]
 }
+
+export interface StagedTag {
+  id: string
+  color: string
+  name: string
+  value: string | undefined
+  focused: 'name' | 'value' | boolean
+  width: number
+}

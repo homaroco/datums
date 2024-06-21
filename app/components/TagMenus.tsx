@@ -1,4 +1,4 @@
-import { TagProps } from '../types'
+import { StagedTag, TagProps } from '../types'
 import { Tag } from './Tag'
 
 function getUniqueTagNames(tags: TagProps[]) {
@@ -22,7 +22,7 @@ export function TagNameMenu({
 }: {
   isVisible: boolean
   tags: TagProps[]
-  selectTag: (tag: TagProps) => void
+  selectTag: (tag: StagedTag) => void
 }) {
   const uniqueNameTags = getUniqueTagNames(tags).map((tag: any, i: number) => (
     <span
@@ -73,14 +73,6 @@ function getUniqueTagValues(tags: TagProps[], tagName: string) {
   return uniqueTagNameCounts.sort((a: any, b: any) => b.count - a.count)
 }
 
-interface StagedTag {
-  color: string
-  name: string
-  value: string | undefined
-  focused: 'name' | 'value' | boolean
-  width: number
-}
-
 export function TagValueMenu({
   isVisible,
   nameTag,
@@ -88,7 +80,7 @@ export function TagValueMenu({
   selectValue,
 }: {
   isVisible: boolean
-  nameTag: StagedTag | null
+  nameTag: StagedTag
   tags: TagProps[]
   selectValue: (value: string) => void
 }) {
