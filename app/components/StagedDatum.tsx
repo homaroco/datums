@@ -29,11 +29,8 @@ export default function StagedDatum({
   const [nameWidths, setNameWidths] = useState<number[]>([])
   const [valueWidths, setValueWidths] = useState<number[]>([])
   const [nameInput, setNameInput] = useState<string>('')
-  const [isNameInputFocused, setIsNameInputFocused] = useState<boolean>(false)
   const [activeTag, setActiveTag] = useState<StagedTag | null>(null)
   const [isMenuOpen, setIsMenuOpen] = useState<'name' | 'value' | false>(false)
-
-  const createDatumBtnRef = useRef<HTMLButtonElement>(null)
 
   const nameInputRefs = useRef<MutableRefObject<HTMLInputElement>[]>([])
   nameInputRefs.current = stagedTags.map(
@@ -64,25 +61,10 @@ export default function StagedDatum({
       return valueSpanRefs.current[i].current.offsetWidth
     })
     setValueWidths(valueWidths)
-
-    // if (getFocusedTag(stagedTags) === false && isNameInputFocused === false)
-    //   (document.activeElement as HTMLElement).blur()
   }, [stagedTags])
 
   function focusNameInput() {
-    blurTags()
-    setIsNameInputFocused(true)
     setIsMenuOpen('name')
-  }
-
-  function focusTag(nameOrValue: 'name' | 'value', index: number) {
-    // focus the name or value of the ith tag
-    const newTags = [...stagedTags].map((tag, i) =>
-      i === index ? { ...tag, focused: nameOrValue } : tag
-    )
-    setIsMenuOpen(nameOrValue)
-    setActiveTag(newTags[index])
-    setStagedTags(newTags)
   }
 
   function changeTag(nameOrValue: 'name' | 'value', index: number, e: any) {
@@ -94,33 +76,21 @@ export default function StagedDatum({
     setStagedTags(newTags)
   }
 
-  function blurTags() {
-    // false everything
-    const newTags = [...stagedTags].map((tag) => ({
-      ...tag,
-      focused: false,
-    }))
-    setStagedTags(newTags)
-    createDatumBtnRef.current?.focus()
-  }
-
   function createTag(e: KeyboardEvent<HTMLInputElement>) {
-    if (e.key !== 'Enter') {
-      return
-    }
+    // if (e.currentTarget.value === '' && stagedTags.length === 0) {
+    //   return
+    // }
     const newTags = [...stagedTags].concat({
       id: uuid(),
       color: getRandomHex(6),
-      name: (e.target as HTMLInputElement).value,
+      name: e.currentTarget.value,
       value: undefined,
       focused: false,
       width: 0,
     })
     setStagedTags(newTags)
     setNameInput('')
-    setIsNameInputFocused(false)
     setIsMenuOpen(false)
-    createDatumBtnRef.current?.focus()
   }
 
   function convertAddValueBtnToInput(index: number) {
@@ -143,6 +113,19 @@ export default function StagedDatum({
     setIsMenuOpen(false)
   }
 
+  function submit(e) {
+    e.preventDefault()
+    if (nameInput === '') {
+      console.log(e.target)
+      setNameInput('')
+      createDatum(stagedTags)
+      setStagedTags([])
+    } else {
+      console.log('submitStagedDatum->createTag')
+      createTag(e)
+    }
+  }
+
   return (
     <footer
       onBlur={() => setIsMenuOpen(false)}
@@ -161,7 +144,10 @@ export default function StagedDatum({
           selectValue={updateStagedTagFromValueMenu}
         />
       )}
-      <div className="active-datum flex relative items-center justify-between w-full h-[50px] pl-[10px]">
+      <form
+        onSubmit={submit}
+        className="active-datum flex relative items-center justify-between w-full h-[50px] pl-[10px]"
+      >
         <div className="flex relative overflow-auto">
           <div className="inline-flex relative grow overflow-auto">
             <div className="inline-flex relative">
@@ -172,17 +158,15 @@ export default function StagedDatum({
                     className="staged-tag inline-flex rounded overflow-hidden h-[30px] font-bold mr-[5px] whitespace-nowrap"
                   >
                     <input
+                      name="tagNameInput"
                       className="inline-flex relative items-center pr-[8px] pl-[8px] min-w-[17px]"
-                      value={tag.name}
-                      onFocus={() => focusTag('name', i)}
-                      onBlur={blurTags}
-                      onKeyDown={(e) => e.key === 'Enter' && blurTags()}
+                      defaultValue={tag.name}
                       onChange={(e) => changeTag('name', i, e)}
                       ref={nameInputRefs.current[i]}
                       style={{
                         backgroundColor: tag.color,
                         color: getContrastColor(tag.color),
-                        width: nameWidths[i] + 1, // extra pixel allows selecting end of string
+                        width: nameWidths[i] + 1 || '0px', // extra pixel allows selecting end of string
                       }}
                     ></input>
                     <span
@@ -194,12 +178,9 @@ export default function StagedDatum({
                     {typeof tag.value === 'string' ? (
                       <input
                         className="flex items-center rounded-tr rounded-br border-2 px-[6px]"
-                        value={tag.value === undefined ? '' : tag.value}
+                        defaultValue={tag.value === undefined ? '' : tag.value}
                         placeholder="value"
                         autoFocus
-                        onFocus={() => focusTag('value', i)}
-                        onBlur={() => blurTags()}
-                        onKeyDown={(e) => e.key === 'Enter' && blurTags()}
                         onChange={(e) => changeTag('value', i, e)}
                         style={{
                           color: tag.color,
@@ -210,6 +191,7 @@ export default function StagedDatum({
                       ></input>
                     ) : (
                       <button
+                        type="button"
                         className="flex items-center rounded-tr rounded-br justify-center w-[30px] h-[30px] text-lg"
                         style={{
                           backgroundColor: tag.color,
@@ -230,10 +212,11 @@ export default function StagedDatum({
                 )
               })}
               <input
+                name="nameInput"
                 className="flex items-center border rounded px-[5px] h-[30px] ph-[1px] w-[66px] placeholder-neutral-700 border-neutral-700 bg-black focus:border-white text-neutral-700 focus:text-white focus:outline-none focus:placeholder:text-white"
                 onFocus={focusNameInput}
                 onBlur={() => setIsNameInputFocused(false)}
-                onKeyDown={(e) => createTag(e)}
+                onKeyDown={(e) => e.key === 'Enter' && submit(e)}
                 onChange={(e) => setNameInput(e.target.value)}
                 placeholder="New tag"
                 value={nameInput}
@@ -242,17 +225,14 @@ export default function StagedDatum({
           </div>
         </div>
         <button
+          type="submit"
           className="flex items-center justify-center text-3xl w-[50px] h-[50px] text-neutral-500 active:hover:text-white"
           disabled={stagedTags.length === 0}
-          ref={createDatumBtnRef}
-          onClick={() => {
-            createDatum(stagedTags)
-            setStagedTags([])
-          }}
+          onClick={submit}
         >
           <FaPlus />
         </button>
-      </div>
+      </form>
     </footer>
   )
 }
