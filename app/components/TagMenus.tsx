@@ -18,23 +18,27 @@ function getUniqueTagNames(tags: TagProps[]) {
 export function TagNameMenu({
   isVisible,
   tags,
+  filter,
   selectTag,
 }: {
   isVisible: boolean
   tags: TagProps[]
+  filter: string
   selectTag: (tag: StagedTag) => void
 }) {
-  const uniqueNameTags = getUniqueTagNames(tags).map((tag: any, i: number) => (
-    <span
-      onClick={() => {
-        selectTag(tag)
-      }}
-      key={i}
-      className="pb-[5px]"
-    >
-      <Tag {...{ name: tag.name, color: tag.color }} />
-    </span>
-  ))
+  const uniqueNameTags = getUniqueTagNames(tags)
+    .filter((tag) => tag.name?.indexOf(filter) !== -1)
+    .map((tag: any, i: number) => (
+      <span
+        onClick={() => {
+          selectTag(tag)
+        }}
+        key={i}
+        className="pb-[5px]"
+      >
+        <Tag {...{ name: tag.name, color: tag.color }} />
+      </span>
+    ))
 
   let height = 'max-h-0 opacity-0'
   let border = 'border-b-[1px]'

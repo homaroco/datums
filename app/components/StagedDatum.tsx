@@ -90,7 +90,7 @@ export default function StagedDatum({
     })
     setStagedTags(newTags)
     setNameInput('')
-    setIsMenuOpen(false)
+    setIsMenuOpen('name')
   }
 
   function convertAddValueBtnToInput(index: number) {
@@ -134,6 +134,7 @@ export default function StagedDatum({
       <TagNameMenu
         isVisible={isMenuOpen === 'name' && tags.length !== 0}
         tags={tags}
+        filter={nameInput}
         selectTag={createStagedTagFromNameMenu}
       />
       {activeTag && (
