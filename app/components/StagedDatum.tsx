@@ -116,12 +116,10 @@ export default function StagedDatum({
   function submit(e) {
     e.preventDefault()
     if (nameInput === '') {
-      console.log(e.target)
       setNameInput('')
       createDatum(stagedTags)
       setStagedTags([])
     } else {
-      console.log('submitStagedDatum->createTag')
       createTag(e)
     }
   }
@@ -216,7 +214,6 @@ export default function StagedDatum({
                 name="nameInput"
                 className="flex items-center border rounded px-[5px] h-[30px] ph-[1px] w-[66px] placeholder-neutral-700 border-neutral-700 bg-black focus:border-white text-neutral-700 focus:text-white focus:outline-none focus:placeholder:text-white"
                 onFocus={focusNameInput}
-                onBlur={() => setIsNameInputFocused(false)}
                 onKeyDown={(e) => e.key === 'Enter' && submit(e)}
                 onChange={(e) => setNameInput(e.target.value)}
                 placeholder="New tag"

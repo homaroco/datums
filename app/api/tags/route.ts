@@ -15,7 +15,17 @@ function color() {
 }
 
 export async function GET(req: Request) {
-  const tags = await prisma.tag.findMany()
+  const { searchParams } = new URL(req.url)
+  const userId = searchParams.get('userId')
+
+  const tags = await prisma.tag.findMany({
+    where: {
+      datumUuid: {
+        in: datumUuids,
+      },
+    },
+  })
+  console.log(tags)
   return Response.json(tags)
 }
 
