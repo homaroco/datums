@@ -1,19 +1,8 @@
 import { v4 as uuid } from 'uuid'
-import moment from 'moment'
 import { PrismaClient } from '@prisma/client'
-
-import { getRandomTag } from '../../lib/random'
-import {
-  convertHslValuesToHexString,
-  getRandomHslValues,
-} from '../../lib/color'
 import { NextRequest } from 'next/server'
 
 const prisma = new PrismaClient()
-
-function color() {
-  return convertHslValuesToHexString(getRandomHslValues())
-}
 
 function assignTagsToDatums(datums: any, tags: any) {
   let datumsWithTags: any[] = []
@@ -65,7 +54,21 @@ export async function POST(req: Request) {
     const datum = await req.json()
     console.log(datum)
     await prisma.datum.create({
-      data: datum,
+      data: {
+        userId: datum.userId,
+        createdAt: datum.createdAt,
+        uuid: datum.uuid,
+      },
+    })
+    const tags = datum.tags.map((tag: any) => ({
+      datumUuid: datum.uuid,
+      name: tag.name,
+      value: tag.value ? tag.value : null,
+      unit: tag.unit ? tag.unit : null,
+      color: tag.color,
+    }))
+    await prisma.tag.createMany({
+      data: tags,
     })
     return Response.json({ message: 'new datum added' })
   } catch (e) {

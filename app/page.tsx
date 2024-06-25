@@ -74,29 +74,29 @@ export default function App() {
     setIsLoading(false)
   }, [publicKey])
 
-  async function fetchTags(uuids: string[]) {
-    console.log('Fetching tags...')
-    // const form = []
-    // const encodedUserId = encodeURIComponent(userId)
-    // form.push(encodedUserId)
-    let tags
-    try {
-      tags = await fetch(`http://localhost:3000/api/tags`, {
-        method: 'POST',
-        body: JSON.stringify(uuids),
-      }).then((res) => res.json())
-      console.log('Fetched tags!')
-    } catch (e) {
-      console.error(e)
-      return []
-    }
-    // let decryptedTags = []
-    // for (const tag of tags) {
-    //   const decryptedTag = await decryptTag(tag)
-    //   decryptedTags.push(decryptedTag)
-    // }
-    return tags
-  }
+  // async function fetchTags(uuids: string[]) {
+  //   console.log('Fetching tags...')
+  //   // const form = []
+  //   // const encodedUserId = encodeURIComponent(userId)
+  //   // form.push(encodedUserId)
+  //   let tags
+  //   try {
+  //     tags = await fetch(`http://localhost:3000/api/tags`, {
+  //       method: 'POST',
+  //       body: JSON.stringify(uuids),
+  //     }).then((res) => res.json())
+  //     console.log('Fetched tags!')
+  //   } catch (e) {
+  //     console.error(e)
+  //     return []
+  //   }
+  //   // let decryptedTags = []
+  //   // for (const tag of tags) {
+  //   //   const decryptedTag = await decryptTag(tag)
+  //   //   decryptedTags.push(decryptedTag)
+  //   // }
+  //   return tags
+  // }
 
   async function fetchDatums() {
     console.log('Fetching datums...')
@@ -199,13 +199,10 @@ export default function App() {
       true,
       ['encrypt']
     )
-    console.log(publicKey)
-    console.log(await encrypt(uuid, pubCryptoKey))
-    const encryptedUuid = await encrypt(uuid, pubCryptoKey)
-    const encryptedCreatedAt = await encrypt(createdAt, pubCryptoKey)
     const fetchBody = JSON.stringify({
       uuid,
       createdAt,
+      tags: newTags,
       userId: publicKey.n, // store the key modulus
     })
     console.log(fetchBody)
@@ -213,22 +210,22 @@ export default function App() {
       method: 'POST',
       body: fetchBody,
     })
-    const encryptedTags = await Promise.all(
-      newTags.map(async (tag) => {
-        return {
-          datumUuid: uuid, //await encrypt(uuid, pubCryptoKey),
-          name: tag.name ? tag.name : null, //await encrypt(tag.name, pubCryptoKey) : null,
-          color: tag.color, //await encrypt(tag.color, pubCryptoKey),
-          value: tag.value ? tag.value : null, //await encrypt(tag.value, pubCryptoKey) : null,
-          unit: tag.unit ? tag.unit : null, //await encrypt(tag.unit, pubCryptoKey) : null,
-        }
-      })
-    )
-    await fetch('http://localhost:3000/api/tags', {
-      method: 'POST',
-      body: JSON.stringify(encryptedTags),
-    })
-    setTags([...tags, ...newTags])
+    // const encryptedTags = await Promise.all(
+    //   newTags.map(async (tag) => {
+    //     return {
+    //       datumUuid: uuid, //await encrypt(uuid, pubCryptoKey),
+    //       name: tag.name ? tag.name : null, //await encrypt(tag.name, pubCryptoKey) : null,
+    //       color: tag.color, //await encrypt(tag.color, pubCryptoKey),
+    //       value: tag.value ? tag.value : null, //await encrypt(tag.value, pubCryptoKey) : null,
+    //       unit: tag.unit ? tag.unit : null, //await encrypt(tag.unit, pubCryptoKey) : null,
+    //     }
+    //   })
+    // )
+    // await fetch('http://localhost:3000/api/tags', {
+    //   method: 'POST',
+    //   body: JSON.stringify(encryptedTags),
+    // })
+    // setTags([...tags, ...newTags])
   }
 
   function deleteDatum(id: string) {
