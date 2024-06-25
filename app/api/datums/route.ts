@@ -9,7 +9,6 @@ function assignTagsToDatums(datums: any, tags: any) {
   datums.forEach((datum: any) => {
     datum.tags = []
     tags.forEach((tag: any) => {
-      console.log('uuids:', datum.uuid, tag.datumUuid)
       if (datum.uuid === tag.datumUuid) {
         datum.tags.push(tag)
       }
@@ -52,23 +51,40 @@ export async function GET(req: NextRequest) {
 export async function POST(req: Request) {
   try {
     const datum = await req.json()
+    // console.log(datum)
+    // await prisma.datum.create({
+    //   data: {
+    //     userId: datum.userId,
+    //     createdAt: datum.createdAt,
+    //     uuid: datum.uuid,
+    //   },
+    // })
+    // const tags = datum.tags.map((tag: any) => ({
+    //   datumUuid: datum.uuid,
+    //   name: tag.name,
+    //   value: tag.value ? tag.value : null,
+    //   unit: tag.unit ? tag.unit : null,
+    //   color: tag.color,
+    // }))
+    // await prisma.tag.createMany({
+    //   data: tags,
+    // })
     console.log(datum)
     await prisma.datum.create({
       data: {
+        uuid: datum.uuid,
         userId: datum.userId,
         createdAt: datum.createdAt,
-        uuid: datum.uuid,
       },
     })
-    const tags = datum.tags.map((tag: any) => ({
-      datumUuid: datum.uuid,
-      name: tag.name,
-      value: tag.value ? tag.value : null,
-      unit: tag.unit ? tag.unit : null,
-      color: tag.color,
-    }))
     await prisma.tag.createMany({
-      data: tags,
+      data: datum.tags.map((tag) => ({
+        datumUuid: datum.uuid,
+        name: tag.name,
+        value: tag.value,
+        unit: tag.unit,
+        color: tag.color,
+      })),
     })
     return Response.json({ message: 'new datum added' })
   } catch (e) {

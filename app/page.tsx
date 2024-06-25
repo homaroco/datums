@@ -21,58 +21,52 @@ export default function App() {
   const [userEmail, setUserEmail] = useState('')
   const [userPassword, setUserPassword] = useState('')
   const [isAppMenuOpen, setIsAppMenuOpen] = useState(false)
-  const [publicKey, setPublicKey] = useState<JsonWebKey | null>(null)
-  const [privateKey, setPrivateKey] = useState<JsonWebKey | null>(null)
-  console.log(publicKey)
+  const [publicKey, setPublicKey] = useState<JsonWebKey>(
+    JSON.parse(localStorage.getItem('publicKey') || '{}')
+  )
+  const [privateKey, setPrivateKey] = useState<JsonWebKey>(
+    JSON.parse(localStorage.getItem('privateKey') || '{}')
+  )
   // ref used to fade out login page
   const loginPageRef = useRef<HTMLElement>(null)
-
-  useEffect(() => {
-    async function getKeys() {
-      const keys = await window.crypto.subtle.generateKey(
-        {
-          name: 'RSA-OAEP',
-          modulusLength: 4096,
-          publicExponent: new Uint8Array([1, 0, 1]),
-          hash: 'SHA-256',
-        },
-        true,
-        ['encrypt', 'decrypt']
-      )
-      const { publicKey, privateKey } = keys
-      setPublicKey(await window.crypto.subtle.exportKey('jwk', publicKey))
-      setPrivateKey(await window.crypto.subtle.exportKey('jwk', privateKey))
-      localStorage.setItem('publicKey', JSON.stringify(publicKey))
-      localStorage.setItem('privateKey', JSON.stringify(privateKey))
-    }
-
-    const pubKey = localStorage.getItem('publicKey')
-    const privKey = localStorage.getItem('privateKey')
-
-    if (!pubKey || !privKey) {
-      getKeys()
-    } else {
-      setPublicKey(JSON.parse(pubKey))
-      setPrivateKey(JSON.parse(privKey))
-    }
-  }, [])
+  console.log(datums)
+  // useEffect(() => {
+  //   async function getKeys() {
+  //     const keys = await window.crypto.subtle.generateKey(
+  //       {
+  //         name: 'RSA-OAEP',
+  //         modulusLength: 4096,
+  //         publicExponent: new Uint8Array([1, 0, 1]),
+  //         hash: 'SHA-256',
+  //       },
+  //       true,
+  //       ['encrypt', 'decrypt']
+  //     )
+  //     const { publicKey, privateKey } = keys
+  //     setPublicKey(await window.crypto.subtle.exportKey('jwk', publicKey))
+  //     setPrivateKey(await window.crypto.subtle.exportKey('jwk', privateKey))
+  //     localStorage.setItem('publicKey', JSON.stringify(publicKey))
+  //     localStorage.setItem('privateKey', JSON.stringify(privateKey))
+  //   }
+  //   if (!publicKey || !privateKey) {
+  //     getKeys()
+  //   }
+  // }, [])
 
   // load tags and datums when user is set
   useEffect(() => {
-    console.log('useEffect[publicKey]:', publicKey)
-    if (!publicKey) return
-    setIsLoading(true)
+    // setIsLoading(true)
     async function fetchDatumsAndTags() {
       const datums = await fetchDatums()
-      const uuids = datums.map((datum) => datum.uuid)
       // const tags = await fetchTags(uuids)
       // const datumsWithTags = assignTagsToDatums(datums, tags)
+      console.log(datums)
       setDatums(datums)
-      setTags(tags)
+      // setTags(tags)
     }
     fetchDatumsAndTags()
-    setIsLoading(false)
-  }, [publicKey])
+    // setIsLoading(false)
+  }, [privateKey])
 
   // async function fetchTags(uuids: string[]) {
   //   console.log('Fetching tags...')
@@ -106,19 +100,29 @@ export default function App() {
     console.log('Fetched datums!')
     let decryptedDatums: any = []
     let decryptedDatum: any
-    // for (const [i, datum] of datums.entries()) {
-    //   decryptedDatum = await decryptDatum(datum)
-    //   decryptedDatums.push(decryptedDatum)
-    // }
-    return datums
+    for (const [i, datum] of datums.entries()) {
+      decryptedDatum = await decryptDatum(datum)
+      decryptedDatums.push(decryptedDatum)
+    }
+    return decryptedDatums
   }
 
   async function decryptTag(tag: any) {
-    const datumUuid = await decrypt(tag.datumUuid, privateKey)
-    const name = await decrypt(tag.name, privateKey)
-    const color = await decrypt(tag.color, privateKey)
-    const value = tag.value ? await decrypt(tag.value, privateKey) : null
-    const unit = tag.unit ? await decrypt(tag.unit, privateKey) : null
+    const privCryptoKey = await window.crypto.subtle.importKey(
+      'jwk',
+      privateKey,
+      {
+        name: 'RSA-OAEP',
+        hash: 'SHA-256',
+      },
+      true,
+      ['decrypt']
+    )
+    const datumUuid = await decrypt(tag.datumUuid, privCryptoKey)
+    const name = await decrypt(tag.name, privCryptoKey)
+    const color = await decrypt(tag.color, privCryptoKey)
+    const value = tag.value ? await decrypt(tag.value, privCryptoKey) : null
+    const unit = tag.unit ? await decrypt(tag.unit, privCryptoKey) : null
     return {
       datumUuid,
       name,
@@ -142,9 +146,17 @@ export default function App() {
     )
     const uuid = await decrypt(datum.uuid, privCryptoKey)
     const createdAt = await decrypt(datum.createdAt, privCryptoKey)
+    // const tags = datum.tags.map(async (tag: any) => await decryptTag(tag))
+    let tags = []
+    let decryptedTag
+    for (const tag of datum.tags) {
+      decryptedTag = await decryptTag(tag)
+      tags.push(decryptedTag)
+    }
     return {
       uuid,
       createdAt,
+      tags,
     }
   }
 
@@ -199,10 +211,25 @@ export default function App() {
       true,
       ['encrypt']
     )
+    const encryptedUuid = await encrypt(uuid, pubCryptoKey)
+
+    const encryptedCreatedAt = await encrypt(createdAt, pubCryptoKey)
+
+    const encryptedTags = await Promise.all(
+      newTags.map(async (tag) => {
+        return {
+          datumUuid: encryptedUuid,
+          name: tag.name ? await encrypt(tag.name, pubCryptoKey) : null,
+          color: await encrypt(tag.color, pubCryptoKey),
+          value: tag.value ? await encrypt(tag.value, pubCryptoKey) : null,
+          unit: tag.unit ? await encrypt(tag.unit, pubCryptoKey) : null,
+        }
+      })
+    )
     const fetchBody = JSON.stringify({
-      uuid,
-      createdAt,
-      tags: newTags,
+      uuid: encryptedUuid,
+      createdAt: encryptedCreatedAt,
+      tags: encryptedTags,
       userId: publicKey.n, // store the key modulus
     })
     console.log(fetchBody)
@@ -210,17 +237,6 @@ export default function App() {
       method: 'POST',
       body: fetchBody,
     })
-    // const encryptedTags = await Promise.all(
-    //   newTags.map(async (tag) => {
-    //     return {
-    //       datumUuid: uuid, //await encrypt(uuid, pubCryptoKey),
-    //       name: tag.name ? tag.name : null, //await encrypt(tag.name, pubCryptoKey) : null,
-    //       color: tag.color, //await encrypt(tag.color, pubCryptoKey),
-    //       value: tag.value ? tag.value : null, //await encrypt(tag.value, pubCryptoKey) : null,
-    //       unit: tag.unit ? tag.unit : null, //await encrypt(tag.unit, pubCryptoKey) : null,
-    //     }
-    //   })
-    // )
     // await fetch('http://localhost:3000/api/tags', {
     //   method: 'POST',
     //   body: JSON.stringify(encryptedTags),
