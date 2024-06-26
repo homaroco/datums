@@ -7,16 +7,16 @@ export default function LoginPage({
   userPassword,
   setUserEmail,
   setUserPassword,
+  rememberUser,
+  setRememberUser,
 }: any) {
-  const [rememberCredentials, setRememberCredentials] = useState(false)
-
-  useEffect(() => {
-    if (rememberCredentials) {
+  function prepareToLogin(e) {
+    if (rememberUser) {
       localStorage.setItem('userEmail', userEmail)
       localStorage.setItem('userPassword', userPassword)
     }
-  }, [rememberCredentials])
-
+    login(e)
+  }
   return (
     <section
       ref={loginPageRef}
@@ -31,8 +31,8 @@ export default function LoginPage({
             <input
               type="checkbox"
               id="rememberCredentials"
-              checked={rememberCredentials}
-              onChange={() => setRememberCredentials(!rememberCredentials)}
+              checked={rememberUser}
+              onChange={() => setRememberUser(!rememberUser)}
             />
             <label htmlFor="rememberCredentials" className="pl-[5px] pb-[2px]">
               Remember me
@@ -57,7 +57,7 @@ export default function LoginPage({
           <button
             type="submit"
             className={`absolute top-[375px] rainbow border border-white rounded mx-[20px] w-[175px] m-auto p-[5px] font-bold`}
-            onClick={login}
+            onClick={prepareToLogin}
           >
             Get Datums
           </button>

@@ -36,9 +36,16 @@ function getAllTags(datums) {
 export default function App() {
   const [datums, setDatums] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(false)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [userEmail, setUserEmail] = useState('')
-  const [userPassword, setUserPassword] = useState('')
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    localStorage.getItem('userEmail') ? true : false
+  )
+  const [userEmail, setUserEmail] = useState(localStorage.getItem('userEmail'))
+  const [userPassword, setUserPassword] = useState(
+    localStorage.getItem('userPassword')
+  )
+  const [rememberUser, setRememberUser] = useState(
+    userEmail && userPassword ? true : false
+  )
   const [isAppMenuOpen, setIsAppMenuOpen] = useState(false)
   const [keyKey, setKeyKey] = useState('')
   const [publicKey, setPublicKey] = useState<JsonWebKey | null>(null)
@@ -46,6 +53,11 @@ export default function App() {
 
   // ref used to fade out login page
   const loginPageRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const email = localStorage.getItem('userEmail')
+    if (email) setRememberUser(true)
+  }, [])
 
   useEffect(() => {
     async function getKeys() {
@@ -232,10 +244,12 @@ export default function App() {
 
   function logout() {
     closeMenu()
-    localStorage.clear()
     setUserEmail('')
     setUserPassword('')
     setIsLoggedIn(false)
+    setRememberUser(false)
+    localStorage.removeItem('userEmail')
+    localStorage.removeItem('userPassword')
   }
 
   return (
@@ -253,6 +267,8 @@ export default function App() {
           userPassword={userPassword}
           setUserEmail={setUserEmail}
           setUserPassword={setUserPassword}
+          rememberUser={rememberUser}
+          setRememberUser={setRememberUser}
         />
       )}
     </main>

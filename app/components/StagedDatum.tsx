@@ -76,9 +76,10 @@ export default function StagedDatum({
   }
 
   function createTag(e: KeyboardEvent<HTMLInputElement>) {
-    // if (e.currentTarget.value === '' && stagedTags.length === 0) {
-    //   return
-    // }
+    console.log(e.currentTarget.value, stagedTags.length)
+    if (e.currentTarget.value === '' && stagedTags.length === 0) {
+      return
+    }
     const newTags = [...stagedTags].concat({
       id: uuid(),
       color: getRandomHex(6),
@@ -116,6 +117,7 @@ export default function StagedDatum({
 
   function submit(e) {
     e.preventDefault()
+    if (!nameInput.length && !stagedTags.length) return
     if (nameInput === '') {
       setNameInput('')
       createDatum(stagedTags)
