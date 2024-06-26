@@ -31,7 +31,6 @@ export default function StagedDatum({
   const [nameInput, setNameInput] = useState<string>('')
   const [activeTag, setActiveTag] = useState<StagedTag | null>(null)
   const [isMenuOpen, setIsMenuOpen] = useState<'name' | 'value' | false>(false)
-
   const nameInputRefs = useRef<MutableRefObject<HTMLInputElement>[]>([])
   nameInputRefs.current = stagedTags.map(
     (tag, i) => nameInputRefs.current[i] ?? React.createRef()
@@ -98,6 +97,8 @@ export default function StagedDatum({
       i === index ? { ...tag, value: '' } : tag
     )
     setStagedTags(newTags)
+    setActiveTag(newTags[index])
+    setIsMenuOpen('value')
   }
 
   function createStagedTagFromNameMenu(tag: StagedTag) {
@@ -119,6 +120,7 @@ export default function StagedDatum({
       setNameInput('')
       createDatum(stagedTags)
       setStagedTags([])
+      setIsMenuOpen(false)
     } else {
       createTag(e)
     }
@@ -135,14 +137,12 @@ export default function StagedDatum({
         filter={nameInput}
         selectTag={createStagedTagFromNameMenu}
       />
-      {activeTag && (
-        <TagValueMenu
-          isVisible={isMenuOpen === 'value' && tags.length !== 0}
-          nameTag={activeTag}
-          tags={tags}
-          selectValue={updateStagedTagFromValueMenu}
-        />
-      )}
+      <TagValueMenu
+        isVisible={isMenuOpen === 'value' && tags.length !== 0}
+        nameTag={activeTag}
+        tags={tags}
+        selectValue={updateStagedTagFromValueMenu}
+      />
       <form
         onSubmit={submit}
         className="active-datum flex relative items-center justify-between w-full h-[50px] pl-[10px]"
@@ -180,6 +180,7 @@ export default function StagedDatum({
                         defaultValue={tag.value === undefined ? '' : tag.value}
                         placeholder="value"
                         autoFocus
+                        onFocus={() => setIsMenuOpen('value')}
                         onChange={(e) => changeTag('value', i, e)}
                         style={{
                           color: tag.color,

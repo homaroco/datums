@@ -94,7 +94,6 @@ export function TagValueMenu({
     height = 'max-h-[150px] opacity-100'
     border = 'border-b-[1px]'
   }
-
   let uniqueValues: string[] = []
   tags.forEach((tag) => {
     if (nameTag && tag.value && tag.name === nameTag.name) {

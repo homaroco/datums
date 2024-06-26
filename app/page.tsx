@@ -9,84 +9,95 @@ import LoginPage from './components/LoginPage'
 import AppMenu from './components/AppMenu'
 
 // import { encrypt, decrypt } from './lib/crypto.js'
-import { encrypt, decrypt } from './lib/asymmetricCrypto.js'
+import {
+  encrypt,
+  decrypt,
+  passwordEncrypt,
+  passwordDecrypt,
+  encode,
+  decode,
+} from './lib/asymmetricCrypto.js'
 
 import { TagProps } from './types'
 
 const API_ROUTE = 'http://localhost:3000/api'
+const SALT = 'this is my salt, there are many like it but this one is mine'
+
+function getAllTags(datums) {
+  let allTags = []
+  datums.forEach((datum) => {
+    datum.tags.forEach((tag) => {
+      allTags.push(tag)
+    })
+  })
+  return allTags
+}
 
 export default function App() {
   const [datums, setDatums] = useState<any[]>([])
-  const [tags, setTags] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [userEmail, setUserEmail] = useState('')
   const [userPassword, setUserPassword] = useState('')
   const [isAppMenuOpen, setIsAppMenuOpen] = useState(false)
-  const [publicKey, setPublicKey] = useState<JsonWebKey>(
-    JSON.parse(localStorage.getItem('publicKey') || '{}')
-  )
-  const [privateKey, setPrivateKey] = useState<JsonWebKey>(
-    JSON.parse(localStorage.getItem('privateKey') || '{}')
-  )
+  const [keyKey, setKeyKey] = useState('')
+  const [publicKey, setPublicKey] = useState<JsonWebKey | null>(null)
+  const [privateKey, setPrivateKey] = useState<JsonWebKey | null>(null)
 
   // ref used to fade out login page
   const loginPageRef = useRef<HTMLElement>(null)
 
-  // useEffect(() => {
-  //   async function getKeys() {
-  //     const keys = await window.crypto.subtle.generateKey(
-  //       {
-  //         name: 'RSA-OAEP',
-  //         modulusLength: 4096,
-  //         publicExponent: new Uint8Array([1, 0, 1]),
-  //         hash: 'SHA-256',
-  //       },
-  //       true,
-  //       ['encrypt', 'decrypt']
-  //     )
-  //     const { publicKey, privateKey } = keys
-  //     setPublicKey(await window.crypto.subtle.exportKey('jwk', publicKey))
-  //     setPrivateKey(await window.crypto.subtle.exportKey('jwk', privateKey))
-  //     localStorage.setItem('publicKey', JSON.stringify(publicKey))
-  //     localStorage.setItem('privateKey', JSON.stringify(privateKey))
-  //   }
-  //   if (!publicKey || !privateKey) {
-  //     getKeys()
-  //   }
-  // }, [])
+  useEffect(() => {
+    async function getKeys() {
+      const keys = await window.crypto.subtle.generateKey(
+        {
+          name: 'RSA-OAEP',
+          modulusLength: 4096,
+          publicExponent: new Uint8Array([1, 0, 1]),
+          hash: 'SHA-256',
+        },
+        true,
+        ['encrypt', 'decrypt']
+      )
+      const { publicKey, privateKey } = keys
+      const exportedPublicKey = await window.crypto.subtle.exportKey(
+        'jwk',
+        publicKey
+      )
+      const exportedPrivateKey = await window.crypto.subtle.exportKey(
+        'jwk',
+        privateKey
+      )
+      setPublicKey(exportedPublicKey)
+      setPrivateKey(exportedPrivateKey)
+      localStorage.setItem(
+        `${keyKey}-public`,
+        JSON.stringify(exportedPublicKey)
+      )
+      localStorage.setItem(
+        `${keyKey}-private`,
+        JSON.stringify(exportedPrivateKey)
+      )
+    }
+    if (!keyKey.length) return
+    const publicKey = localStorage.getItem(`${keyKey}-public`)
+    const privateKey = localStorage.getItem(`${keyKey}-private`)
+    if (publicKey === null || privateKey === null) {
+      getKeys()
+    } else {
+      setPublicKey(JSON.parse(publicKey))
+      setPrivateKey(JSON.parse(privateKey))
+    }
+  }, [keyKey])
 
   useEffect(() => {
     async function fetchDatumsAndTags() {
       const datums = await fetchDatums()
       setDatums(datums)
     }
-    fetchDatumsAndTags()
+    console.log(privateKey)
+    if (privateKey) fetchDatumsAndTags()
   }, [privateKey])
-
-  // async function fetchTags(uuids: string[]) {
-  //   console.log('Fetching tags...')
-  //   // const form = []
-  //   // const encodedUserId = encodeURIComponent(userId)
-  //   // form.push(encodedUserId)
-  //   let tags
-  //   try {
-  //     tags = await fetch(`http://localhost:3000/api/tags`, {
-  //       method: 'POST',
-  //       body: JSON.stringify(uuids),
-  //     }).then((res) => res.json())
-  //     console.log('Fetched tags!')
-  //   } catch (e) {
-  //     console.error(e)
-  //     return []
-  //   }
-  //   // let decryptedTags = []
-  //   // for (const tag of tags) {
-  //   //   const decryptedTag = await decryptTag(tag)
-  //   //   decryptedTags.push(decryptedTag)
-  //   // }
-  //   return tags
-  // }
 
   async function fetchDatums() {
     console.log('Fetching datums...')
@@ -207,6 +218,8 @@ export default function App() {
   async function login(e: any) {
     e.preventDefault()
     fadeOutLoginPage()
+    const keyKey = await passwordEncrypt(userPassword, SALT, userEmail)
+    setKeyKey(keyKey)
   }
 
   function openMenu() {
@@ -231,7 +244,7 @@ export default function App() {
       <Header openMenu={openMenu} />
       {isLoading && <span className="loader color-neutral-700"></span>}
       <DatumList datums={datums} deleteDatum={deleteDatum} />
-      <StagedDatum tags={tags} createDatum={createDatum} />
+      <StagedDatum tags={getAllTags(datums)} createDatum={createDatum} />
       {!isLoggedIn && (
         <LoginPage
           loginPageRef={loginPageRef}
