@@ -20,6 +20,7 @@ html,
 body {
   height: 100%;
   scrollbar-width: none;
+  background: black;
 }
 
 body {
@@ -147,14 +148,10 @@ footer {
 
 .tag-name-menu,
 .tag-value-menu {
-  transition:
-    max-height 0.2s ease-out,
-    opacity 0.2s ease-out;
+  transition: max-height 0.2s ease-out, opacity 0.2s ease-out;
   /* animation-name: slide-up;
 	animation-duration: 1s; */
-  box-shadow:
-    0px -2px 10px rgba(0, 0, 0, 0.5),
-    inset 0 2px 40px 0 rgb(0 0 0);
+  box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.5), inset 0 2px 40px 0 rgb(0 0 0);
 }
 
 /* footer {
@@ -227,7 +224,12 @@ footer {
   transition: opacity 1s ease-out;
 }
 
-.app-menu {
+.main-menu {
   transition: width 0.25s ease-out;
+  box-shadow: rgba(0, 0, 0, 0.75) 10px 0px 15px 15px;
+}
+
+.app-menu {
+  transition: height 0.25s ease-out;
   box-shadow: rgba(0, 0, 0, 0.75) 10px 0px 15px 15px;
 }

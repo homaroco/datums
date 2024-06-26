@@ -1,42 +1,42 @@
+import { LuCheckSquare } from 'react-icons/lu'
+import { LuGalleryVertical } from 'react-icons/lu'
+import { LuIterationCcw } from 'react-icons/lu'
+import { LuList } from 'react-icons/lu'
+import { TbDropletPlus } from 'react-icons/tb'
+
 export default function AppMenu({
   isOpen,
   closeMenu,
-  logout,
+  viewPeriodTracker,
 }: {
   isOpen: boolean
   closeMenu: () => void
-  logout: () => void
+  viewPeriodTracker: () => void
 }) {
-  let width = 'w-[0%]'
-  if (isOpen) width = 'w-[50%]'
+  let height = 'h-[0]'
+  if (isOpen) height = 'h-[33%]'
   return (
     <>
       <ul
-        className={`app-menu flex flex-col fixed z-30 bottom-0 top-0 right-[-1px] ${width} bg-black border-l border-white text-l font-bold`}
+        className={`app-menu flex flex-wrap justify-center fixed z-30 left-0 top-[-1px] right-0 ${height} bg-black border-b border-white text-l font-bold overflow-hidden`}
       >
-        <li
-          className="flex justify-start items-center mx-[10px] h-[50px] border-b border-neutral-700"
-          onClick={logout}
-        >
-          Logout
+        <li className="flex justify-center items-center mx-[10px] w-[75px] h-[75px]">
+          <LuCheckSquare style={{ scale: 3 }} />
+        </li>
+        <li className="flex justify-center items-center mx-[10px] w-[75px] h-[75px]">
+          <LuGalleryVertical style={{ scale: 3 }} />
+        </li>
+        <li className="flex justify-center items-center mx-[10px] w-[75px] h-[75px]">
+          <LuIterationCcw style={{ scale: 3 }} />
+        </li>
+        <li className="flex justify-center items-center mx-[10px] w-[75px] h-[75px]">
+          <LuList style={{ scale: 3 }} />
         </li>
         <li
-          className="flex justify-start items-center mx-[10px] h-[50px] border-b border-neutral-700"
-          onClick={logout}
+          className="flex justify-center items-center mx-[10px] w-[75px] h-[75px]"
+          onClick={viewPeriodTracker}
         >
-          Settings
-        </li>
-        <li
-          className="flex justify-start items-center mx-[10px] h-[50px] border-b border-neutral-700"
-          onClick={logout}
-        >
-          Help
-        </li>
-        <li
-          className="flex justify-start items-center mx-[10px] h-[50px] border-b border-neutral-700"
-          onClick={logout}
-        >
-          About
+          <TbDropletPlus style={{ scale: 3 }} />
         </li>
       </ul>
       {isOpen && (

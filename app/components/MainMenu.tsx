@@ -2,10 +2,12 @@ export default function MainMenu({
   isOpen,
   closeMenu,
   logout,
+  openSettings,
 }: {
   isOpen: boolean
   closeMenu: () => void
   logout: () => void
+  openSettings: () => void
 }) {
   let width = 'w-[0%]'
   if (isOpen) width = 'w-[50%]'
@@ -22,7 +24,7 @@ export default function MainMenu({
         </li>
         <li
           className="flex justify-start items-center mx-[10px] h-[50px] border-b border-neutral-700"
-          onClick={logout}
+          onClick={openSettings}
         >
           Settings
         </li>

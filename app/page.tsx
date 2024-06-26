@@ -6,19 +6,14 @@ import StagedDatum from './components/StagedDatum'
 import Header from './components/Header'
 import DatumList from './components/DatumList'
 import LoginPage from './components/LoginPage'
+import MainMenu from './components/MainMenu'
 import AppMenu from './components/AppMenu'
 
 // import { encrypt, decrypt } from './lib/crypto.js'
-import {
-  encrypt,
-  decrypt,
-  passwordEncrypt,
-  passwordDecrypt,
-  encode,
-  decode,
-} from './lib/asymmetricCrypto.js'
+import { encrypt, decrypt, passwordEncrypt } from './lib/asymmetricCrypto.js'
 
 import { TagProps } from './types'
+import SettingsMenu from './components/SettingsMenu'
 
 const API_ROUTE = 'http://localhost:3000/api'
 const SALT = 'this is my salt, there are many like it but this one is mine'
@@ -35,6 +30,7 @@ function getAllTags(datums) {
 
 export default function App() {
   const [datums, setDatums] = useState<any[]>([])
+  const [view, setView] = useState<string>('datums')
   const [isLoading, setIsLoading] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(
     localStorage.getItem('userEmail') ? true : false
@@ -46,20 +42,30 @@ export default function App() {
   const [rememberUser, setRememberUser] = useState(
     userEmail && userPassword ? true : false
   )
+  const [isMainMenuOpen, setIsMainMenuOpen] = useState(false)
   const [isAppMenuOpen, setIsAppMenuOpen] = useState(false)
+  const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false)
   const [keyKey, setKeyKey] = useState('')
   const [publicKey, setPublicKey] = useState<JsonWebKey | null>(null)
   const [privateKey, setPrivateKey] = useState<JsonWebKey | null>(null)
-
+  console.log('render')
   // ref used to fade out login page
   const loginPageRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
+    async function getKeyKey() {
+      const keyKey = await passwordEncrypt(userPassword, SALT, userEmail)
+      setKeyKey(keyKey)
+    }
     const email = localStorage.getItem('userEmail')
-    if (email) setRememberUser(true)
+    if (email) {
+      setRememberUser(true)
+      getKeyKey()
+    }
   }, [])
 
   useEffect(() => {
+    console.log('useEffect[keyKey]')
     async function getKeys() {
       const keys = await window.crypto.subtle.generateKey(
         {
@@ -103,6 +109,7 @@ export default function App() {
   }, [keyKey])
 
   useEffect(() => {
+    console.log('useEffect[privateKey]')
     async function fetchDatumsAndTags() {
       const datums = await fetchDatums()
       setDatums(datums)
@@ -235,10 +242,16 @@ export default function App() {
   }
 
   function openMenu() {
+    setIsMainMenuOpen(true)
+  }
+
+  function openAppMenu() {
     setIsAppMenuOpen(true)
   }
 
   function closeMenu() {
+    setIsMainMenuOpen(false)
+    setIsSettingsMenuOpen(false)
     setIsAppMenuOpen(false)
   }
 
@@ -250,15 +263,35 @@ export default function App() {
     setRememberUser(false)
     localStorage.removeItem('userEmail')
     localStorage.removeItem('userPassword')
+    setDatums([])
   }
 
   return (
     <main className="flex flex-col w-full h-full items-center justify-between font-nunito text-sm text-neutral-700">
-      <AppMenu isOpen={isAppMenuOpen} closeMenu={closeMenu} logout={logout} />
-      <Header openMenu={openMenu} />
+      <MainMenu
+        isOpen={isMainMenuOpen}
+        closeMenu={closeMenu}
+        logout={logout}
+        openSettings={() => setIsSettingsMenuOpen(true)}
+      />
+      <SettingsMenu
+        isOpen={isSettingsMenuOpen}
+        closeMenu={closeMenu}
+        privateKey={privateKey}
+      />
+      <AppMenu
+        isOpen={isAppMenuOpen}
+        closeMenu={closeMenu}
+        viewPeriodTracker={() => setView('period-tracker')}
+      />
+      <Header openMenu={openMenu} openAppMenu={openAppMenu} />
       {isLoading && <span className="loader color-neutral-700"></span>}
-      <DatumList datums={datums} deleteDatum={deleteDatum} />
-      <StagedDatum tags={getAllTags(datums)} createDatum={createDatum} />
+      {view === 'datums' && (
+        <>
+          <DatumList datums={datums} deleteDatum={deleteDatum} />
+          <StagedDatum tags={getAllTags(datums)} createDatum={createDatum} />
+        </>
+      )}
       {!isLoggedIn && (
         <LoginPage
           loginPageRef={loginPageRef}
