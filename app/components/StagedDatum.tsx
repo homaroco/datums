@@ -160,6 +160,7 @@ export default function StagedDatum({
                   >
                     <input
                       name="tagNameInput"
+                      type="text"
                       className="inline-flex relative items-center pr-[8px] pl-[8px] min-w-[17px]"
                       defaultValue={tag.name}
                       onChange={(e) => changeTag('name', i, e)}
@@ -181,6 +182,7 @@ export default function StagedDatum({
                         className="flex items-center rounded-tr rounded-br border-2 px-[6px]"
                         defaultValue={tag.value === undefined ? '' : tag.value}
                         placeholder="value"
+                        type="text"
                         autoFocus
                         onFocus={() => setIsMenuOpen('value')}
                         onChange={(e) => changeTag('value', i, e)}
@@ -215,6 +217,7 @@ export default function StagedDatum({
               })}
               <input
                 name="nameInput"
+                type="text"
                 className="flex items-center border rounded px-[5px] h-[30px] ph-[1px] w-[66px] placeholder-neutral-700 border-neutral-700 bg-black focus:border-white text-neutral-700 focus:text-white focus:outline-none focus:placeholder:text-white"
                 onFocus={focusNameInput}
                 onKeyDown={(e) => e.key === 'Enter' && submit(e)}
