@@ -18,10 +18,10 @@ import SettingsMenu from './components/SettingsMenu'
 const API_ROUTE = 'http://localhost:3000/api'
 const SALT = 'this is my salt, there are many like it but this one is mine'
 
-function getAllTags(datums) {
-  let allTags = []
-  datums.forEach((datum) => {
-    datum.tags.forEach((tag) => {
+function getAllTags(datums: any) {
+  let allTags: any = []
+  datums.forEach((datum: any) => {
+    datum.tags.forEach((tag: any) => {
       allTags.push(tag)
     })
   })
@@ -119,17 +119,19 @@ export default function App() {
   }, [privateKey])
 
   async function fetchDatums() {
+    if (!publicKey) throw new Error('Unable to fetch datums without userId set')
     console.log('Fetching datums...')
     const datums = await fetch(
       `${API_ROUTE}/datums?userId=${publicKey.n}`
     ).then((res) => res.json())
     console.log('Fetched datums!')
     return await Promise.all(
-      datums.map(async (datum) => await decryptDatum(datum))
+      datums.map(async (datum: any) => await decryptDatum(datum))
     )
   }
 
   async function getPublicKey() {
+    if (!publicKey) return
     return await window.crypto.subtle.importKey(
       'jwk',
       publicKey,
@@ -140,6 +142,7 @@ export default function App() {
   }
 
   async function getPrivateKey() {
+    if (!privateKey) return
     return await window.crypto.subtle.importKey(
       'jwk',
       privateKey,
@@ -155,7 +158,7 @@ export default function App() {
       uuid: await decrypt(datum.uuid, key),
       createdAt: await decrypt(datum.createdAt, key),
       tags: await Promise.all(
-        datum.tags.map(async (tag) => await decryptTag(tag))
+        datum.tags.map(async (tag: any) => await decryptTag(tag))
       ),
     }
   }
@@ -212,6 +215,8 @@ export default function App() {
         }
       })
     )
+    if (!publicKey)
+      throw new Error('Unable to create datums without userId set')
     await fetch('http://localhost:3000/api/datums', {
       method: 'POST',
       body: JSON.stringify({
@@ -278,6 +283,7 @@ export default function App() {
         isOpen={isSettingsMenuOpen}
         closeMenu={closeMenu}
         privateKey={privateKey}
+        loadPrivateKey={() => console.log('TODO: load private key')}
       />
       <AppMenu
         isOpen={isAppMenuOpen}
