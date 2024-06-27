@@ -115,7 +115,7 @@ export default function StagedDatum({
     setIsMenuOpen(false)
   }
 
-  function submit(e) {
+  function submit(e: any) {
     e.preventDefault()
     if (!nameInput.length && !stagedTags.length) return
     if (nameInput === '') {

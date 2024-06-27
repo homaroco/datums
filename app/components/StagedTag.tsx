@@ -62,7 +62,7 @@ export default function StagedTag({
           color={color}
           value={value}
           onChange={onValueChange}
-          onSubmit={(e) => onValueSubmit(e)}
+          onSubmit={(e: any) => onValueSubmit(e)}
         />
       )}
     </span>

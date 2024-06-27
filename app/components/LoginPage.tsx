@@ -10,7 +10,7 @@ export default function LoginPage({
   rememberUser,
   setRememberUser,
 }: any) {
-  function prepareToLogin(e) {
+  function prepareToLogin(e: any) {
     if (rememberUser) {
       localStorage.setItem('userEmail', userEmail)
       localStorage.setItem('userPassword', userPassword)

@@ -27,7 +27,7 @@ export function TagNameMenu({
   selectTag: (tag: StagedTag) => void
 }) {
   const uniqueNameTags = getUniqueTagNames(tags)
-    .filter((tag) => tag.name?.indexOf(filter) !== -1)
+    .filter((tag: any) => tag.name?.indexOf(filter) !== -1)
     .map((tag: any, i: number) => (
       <span
         onClick={() => {
@@ -84,7 +84,7 @@ export function TagValueMenu({
   selectValue,
 }: {
   isVisible: boolean
-  nameTag: StagedTag
+  nameTag: StagedTag | null
   tags: TagProps[]
   selectValue: (value: string) => void
 }) {
@@ -103,7 +103,7 @@ export function TagValueMenu({
 
   const uniqueValueTags = uniqueValues.map((value, i) => (
     <span key={i} className="pb-[5px]" onClick={() => selectValue(value)}>
-      <Tag {...{ value, color: nameTag.color }} />
+      <Tag {...{ value, color: nameTag ? nameTag.color : 'white' }} />
     </span>
   ))
 
