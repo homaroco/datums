@@ -78,7 +78,7 @@ export async function POST(req: Request) {
       },
     })
     await prisma.tag.createMany({
-      data: datum.tags.map((tag) => ({
+      data: datum.tags.map((tag: any) => ({
         datumUuid: datum.uuid,
         name: tag.name,
         value: tag.value,
