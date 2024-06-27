@@ -25,9 +25,9 @@ export default function LoginPage({
       <span className="fixed top-[5px] rainbow text-3xl font-bold select-none">
         Datums
       </span>
-      <form onSubmit={login} className="flex flex-col">
+      <form onSubmit={login} className="flex flex-col relative">
         {userEmail && userPassword && (
-          <span className="absolute top-[280px] mx-[20px]">
+          <span className="absolute bottom-full mx-[20px]">
             <input
               type="checkbox"
               id="rememberCredentials"
@@ -47,6 +47,7 @@ export default function LoginPage({
           onChange={(e) => setUserEmail(e.target.value)}
         ></input>
         <input
+          type="password"
           autoComplete="on"
           value={userPassword}
           className={`border border-neutral-700 focus:border-white bg-black p-[5px] mx-[20px] rounded mb-[5px] m-auto text-white`}
@@ -56,7 +57,7 @@ export default function LoginPage({
         {userEmail && userPassword && (
           <button
             type="submit"
-            className={`absolute top-[375px] rainbow border border-white rounded mx-[20px] w-[175px] m-auto p-[5px] font-bold`}
+            className={`absolute top-full rainbow border border-white rounded mx-[20px] w-[175px] m-auto p-[5px] font-bold`}
             onClick={prepareToLogin}
           >
             Get Datums

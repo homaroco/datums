@@ -20,7 +20,7 @@ function assignTagsToDatums(datums: any, tags: any) {
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
-  const userId = searchParams.get('userId')
+  const userId = searchParams.get('userId') || ''
   let datums: any[] = []
   try {
     datums = await prisma.datum.findMany({

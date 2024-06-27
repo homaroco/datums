@@ -12,7 +12,7 @@ model Datum {
   uuid       String  @unique @db.VarChar(2048)
   createdAt  String  @db.VarChar(2048)
   modifiedAt String? @db.VarChar(2048)
-  userId     String? @db.VarChar(2048)
+  userId     String  @db.VarChar(2048)
 }
 
 model Tag {
