@@ -36,8 +36,8 @@
   "scope": "/",
   "start_url": "/",
   "background_color": "#0d0d0d",
-  "display": "fullscreen",
+  "display": "standalone",
   "orientation": "portrait",
-  "theme_color": "#0d0d0d",
+  "theme_color": "#000000",
   "splash_pages": null
 }
