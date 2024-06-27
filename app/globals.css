@@ -223,13 +223,3 @@ footer {
 .login-page {
   transition: opacity 1s ease-out;
 }
-
-.main-menu {
-  transition: width 0.25s ease-out;
-  box-shadow: rgba(0, 0, 0, 0.75) 10px 0px 15px 15px;
-}
-
-.app-menu {
-  transition: height 0.25s ease-out;
-  box-shadow: rgba(0, 0, 0, 0.75) 10px 0px 15px 15px;
-}

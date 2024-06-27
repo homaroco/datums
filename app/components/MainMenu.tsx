@@ -9,12 +9,17 @@ export default function MainMenu({
   logout: () => void
   openSettings: () => void
 }) {
+  //   box-shadow: rgba(0, 0, 0, 0.75) 10px 0px 15px 15px;
   let width = 'w-[0%]'
-  if (isOpen) width = 'w-[50%]'
+  let boxShadow = 'shadow-[0_0_0_0_rgba(0,0,0,0.75)]'
+  if (isOpen) {
+    width = 'w-[50%]'
+    boxShadow = 'shadow-[10px_0_15px_15px_rgba(0,0,0,0.75)]'
+  }
   return (
     <>
       <ul
-        className={`main-menu flex flex-col fixed z-30 bottom-0 top-0 right-[-1px] ${width} bg-black border-l border-white text-l font-bold`}
+        className={`main-menu flex flex-col fixed transition-all duration-[500ms] z-30 bottom-0 top-0 right-[-1px] ${width} bg-black border-l border-white text-l font-bold`}
       >
         <li
           className="flex justify-start items-center mx-[10px] h-[50px] border-b border-neutral-700"

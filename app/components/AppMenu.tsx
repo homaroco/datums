@@ -14,11 +14,15 @@ export default function AppMenu({
   viewPeriodTracker: () => void
 }) {
   let height = 'h-[0]'
-  if (isOpen) height = 'h-[20%]'
+  let boxShadow = 'shadow-[0_0_0_0_rgba(0,0,0,0.75)]'
+  if (isOpen) {
+    height = 'h-[20%]'
+    boxShadow = 'shadow-[0_10px_15px_15px_rgba(0,0,0,0.75)]'
+  }
   return (
     <>
       <ul
-        className={`app-menu flex flex-wrap justify-start items-start fixed z-30 left-0 top-[-1px] right-0 ${height} bg-black border-b border-white text-l font-bold overflow-hidden`}
+        className={`app-menu flex transition-all duration-[500ms] flex-wrap justify-start items-start fixed z-30 left-0 top-[-1px] right-0 ${height} ${boxShadow} bg-black border-b border-white text-l font-bold overflow-hidden`}
       >
         <li className="flex justify-center items-center mx-[10px] w-[75px] h-[75px]">
           <LuCheckSquare style={{ scale: 3 }} />
