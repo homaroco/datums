@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import type { Viewport } from 'next'
 import { Nunito } from 'next/font/google'
 import './globals.css'
 
@@ -8,6 +9,10 @@ export const metadata: Metadata = {
   title: 'Datums',
   description:
     'Your information storage and analysis hub for all things private and personal',
+}
+
+export const viewport: Viewport = {
+  interactiveWidget: 'resizes-content',
 }
 
 export default function RootLayout({
