@@ -36,7 +36,7 @@
   "scope": "/",
   "start_url": "/",
   "background_color": "#0d0d0d",
-  "display": "standalone",
+  "display": "fullscreen",
   "orientation": "portrait",
   "theme_color": "#0d0d0d",
   "splash_pages": null
