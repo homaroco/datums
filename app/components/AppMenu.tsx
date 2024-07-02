@@ -15,9 +15,11 @@ export default function AppMenu({
 }) {
   let height = 'h-[0]'
   let boxShadow = 'shadow-[0_0_0_0_rgba(0,0,0,0.75)]'
+  let opacity = 'opacity-0'
   if (isOpen) {
     height = 'h-[20%]'
     boxShadow = 'shadow-[0_10px_15px_15px_rgba(0,0,0,0.75)]'
+    opacity = 'opacity-50'
   }
   return (
     <>
@@ -45,7 +47,7 @@ export default function AppMenu({
       </ul>
       {isOpen && (
         <div
-          className="app-menu-click-away-listener flex fixed top-0 left-0 right-0 bottom-0 opacity-50 bg-black z-10"
+          className={`app-menu-click-away-listener flex fixed top-0 left-0 right-0 ${opacity} transition-opacity bottom-0 bg-black z-10`}
           onClick={closeMenu}
         ></div>
       )}
