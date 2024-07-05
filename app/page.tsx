@@ -30,12 +30,8 @@ function getAllTags(datums: any) {
 
 export default function App() {
   const [datums, setDatums] = useState<any[]>([])
-  const [view, setView] = useState<string>('datums')
-  const [isLoading, setIsLoading] = useState(false)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [userEmail, setUserEmail] = useState('')
   const [userPassword, setUserPassword] = useState('')
-  const [rememberUser, setRememberUser] = useState(false)
   const [isMainMenuOpen, setIsMainMenuOpen] = useState(false)
   const [isAppMenuOpen, setIsAppMenuOpen] = useState(false)
   const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false)
@@ -51,14 +47,7 @@ export default function App() {
       const keyKey = await passwordEncrypt(userPassword, SALT, userEmail)
       setKeyKey(keyKey)
     }
-    const email = localStorage.getItem('userEmail')
-    if (email) {
-      setRememberUser(true)
-      setIsLoggedIn(true)
-      getKeyKey()
-    }
-    const password = localStorage.getItem('userPassword')
-    if (password) setUserPassword(password)
+    getKeyKey()
   }, [])
 
   useEffect(() => {
@@ -288,25 +277,8 @@ export default function App() {
         viewPeriodTracker={() => setView('period-tracker')}
       />
       <Header openMenu={openMenu} openAppMenu={openAppMenu} />
-      {isLoading && <span className="loader color-neutral-700"></span>}
-      {view === 'datums' && (
-        <>
-          <DatumList datums={datums} deleteDatum={deleteDatum} />
-          <StagedDatum tags={getAllTags(datums)} createDatum={createDatum} />
-        </>
-      )}
-      {!isLoggedIn && (
-        <LoginPage
-          loginPageRef={loginPageRef}
-          login={login}
-          userEmail={userEmail}
-          userPassword={userPassword}
-          setUserEmail={setUserEmail}
-          setUserPassword={setUserPassword}
-          rememberUser={rememberUser}
-          setRememberUser={setRememberUser}
-        />
-      )}
+      <DatumList datums={datums} deleteDatum={deleteDatum} />
+      <StagedDatum tags={getAllTags(datums)} createDatum={createDatum} />
     </main>
   )
 }

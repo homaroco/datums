@@ -3,7 +3,7 @@ import Datum from './Datum'
 export default function DatumList({ datums, deleteDatum }: any) {
   return (
     <section className="relative w-full h-full overflow-auto">
-      <ul id="datum-list" className="datum-list overflow-auto">
+      <ul id="datum-list" className="datum-list overflow-auto h-full">
         {datums.map((datum: any) => (
           <Datum
             key={datum.uuid}

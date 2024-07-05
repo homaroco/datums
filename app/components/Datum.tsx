@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { BsThreeDots } from 'react-icons/bs'
 import { getTimestamp } from '../lib/time'
 import { DatumProps, TagProps } from '../types'
@@ -16,6 +16,16 @@ export default function Datum({
   deleteDatum: (id: string) => void
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false)
+  const [menuPosition, setMenuPosition] = useState<string>('bottom')
+
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const viewportOffset = menuRef.current?.getBoundingClientRect()
+    if (viewportOffset?.top < viewportOffset?.height) {
+      setMenuPosition('top')
+    }
+  })
   return (
     <li
       id={`${id}`}
@@ -49,7 +59,13 @@ export default function Datum({
         ></div>
       )}
       {isMenuOpen && (
-        <div className="datum-menu flex absolute flex-col items-center justify-center px-[10px] bg-black right-[25px] bottom-[25px] border border-white rounded text-[16px] text-white z-30">
+        <div
+          ref={menuRef}
+          className={`datum-menu flex absolute flex-col items-center justify-center px-[10px] bg-black right-[25px] border border-white rounded text-[16px] text-white z-30`}
+          style={{
+            [menuPosition]: '25px',
+          }}
+        >
           <span className="py-[10px] w-full text-center border-b border-white">
             Edit
           </span>
