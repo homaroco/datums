@@ -5,12 +5,12 @@ import { DatumProps, TagProps } from '../types'
 import { Tag } from './Tag'
 
 export default function Datum({
-  id,
+  uuid,
   createdAt,
   tags,
   deleteDatum,
 }: {
-  id: string
+  uuid: string
   createdAt: number
   tags: TagProps[]
   deleteDatum: (id: string) => void
@@ -28,7 +28,7 @@ export default function Datum({
   })
   return (
     <li
-      id={`${id}`}
+      id={`${uuid}`}
       className="flex relative items-center justify-between mx-[10px] h-[50px] border-b border-neutral-700 last:border-b-0 w-100%"
     >
       <span className="container inline-flex relative overflow-auto">
@@ -71,7 +71,7 @@ export default function Datum({
           </span>
           <span
             className="py-[10px] w-full text-center"
-            onClick={() => deleteDatum(id)}
+            onClick={() => deleteDatum(uuid)}
           >
             Delete
           </span>

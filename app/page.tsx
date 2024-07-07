@@ -215,19 +215,11 @@ export default function App() {
   }
 
   function deleteDatum(id: string) {
-    setDatums(datums.filter((d) => d.id !== id))
-  }
-
-  function fadeOutLoginPage() {
-    if (loginPageRef.current) loginPageRef.current.style.opacity = '0'
-    setTimeout(() => {
-      setIsLoggedIn(true)
-    }, 1000)
+    setDatums(datums.filter((d) => d.uuid !== id))
   }
 
   async function login(e: any) {
     e.preventDefault()
-    fadeOutLoginPage()
     const keyKey = await passwordEncrypt(userPassword, SALT, userEmail)
     setKeyKey(keyKey)
   }
@@ -250,8 +242,6 @@ export default function App() {
     closeMenu()
     setUserEmail('')
     setUserPassword('')
-    setIsLoggedIn(false)
-    setRememberUser(false)
     localStorage.removeItem('userEmail')
     localStorage.removeItem('userPassword')
     setDatums([])
